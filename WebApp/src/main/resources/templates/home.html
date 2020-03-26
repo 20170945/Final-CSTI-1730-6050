@@ -1,77 +1,50 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/bootstrap.css">
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <title th:text="${companyName}"></title>
-</head>
+<head th:replace="fragments/common :: head"></head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="#"><h1 th:text="${companyName}"></h1></a>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        Vehículos
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" th:each="vehiculo : ${vehiculos}" th:text="${vehiculo}"></a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Directorio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Vende</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contacto</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        Iniciar Sessión
-                    </a>
-                    <div class="dropdown-menu" style="padding: 15px; padding-bottom: 10px;">
-                        <form class="form-horizontal" method="post" accept-charset="UTF-8" action="/login">
-                            <input id="sp_uname" class="form-control login" type="text" name="sp_uname"
-                                   placeholder="Usuario" required/>
-                            <input id="sp_pass" class="form-control login" type="password" name="sp_pass"
-                                   placeholder="Contraseña" required/>
-                            <input class="btn btn-primary" type="submit" name="submit" value="Ingresar"/>
-                        </form>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Registrar</a>
-                </li>
-            </ul>
+<div th:replace="fragments/common :: header"></div>
+<div class="container mt-lg-5">
+    <div class="row">
+        <form action="/" method="get" class="col-lg p-3 border">
+            <h3>Buscar vehículo</h3>
+            <div class="dropdown-divider"></div>
+            <div class="form-group row">
+                <label for="estado" class="col-sm-2 col-form-label">Estado:</label>
+                <div class="col-sm-10">
+                    <select name="estado" class="form-control selectpicker" id="estado">
+                        <option value="all">Nuevo/Usado</option>
+                        <option>Nuevo</option>
+                        <option>Usado</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="marca" class="col-sm-2 col-form-label">Marca:</label>
+                <div class="col-sm-10">
+                    <select name="marca" class="form-control selectpicker" id="marca" data-live-search="true">
+                        <option value="all">Todos</option>
+                        <option th:each="marca : ${marcas}" th:text="${marca}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="modelo" class="col-sm-2 col-form-label">Modelo:</label>
+                <div class="col-sm-10">
+                    <select name="modelo" class="form-control selectpicker" id="modelo" data-live-search="true">
+                        <option value="all">Todos</option>
+                        <option th:each="modelo : ${modelos}" th:text="${modelo}"></option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary float-right">Buscar</button>
+        </form>
+        <div class="col-lg p-3 border">
+            <h3>Tipos</h3>
+            <div class="dropdown-divider"></div>
         </div>
-    </nav>
-</header>
-<div class="container mt-5 p-3 table-bordered">
-    <form action="/meh">
-        <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                   placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-        </div>
-        <div class="dropdown-divider"></div>
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+    </div>
 </div>
+<div class="container border mt-lg-3"><h2>Anuncios recientes</h2></div>
+<div th:replace="fragments/common :: footer"></div>
 </body>
 </html>

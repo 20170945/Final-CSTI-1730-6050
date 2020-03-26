@@ -1,4 +1,10 @@
 {
+  "Empresa": {
+    "Nombre": "Generic",
+    "Contacto": {
+
+    }
+  },
   "BaseDeDatos": {
     "User": "Generic",
     "Pass": "Generic"

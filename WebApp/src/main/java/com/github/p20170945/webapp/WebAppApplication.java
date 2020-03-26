@@ -1,14 +1,11 @@
 package com.github.p20170945.webapp;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import netscape.javascript.JSObject;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -25,6 +22,7 @@ public class WebAppApplication {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Empresa.load();
         SpringApplication.run(WebAppApplication.class, args);
     }
 
