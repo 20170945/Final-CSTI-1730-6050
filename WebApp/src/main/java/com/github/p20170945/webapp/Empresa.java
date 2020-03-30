@@ -6,6 +6,6 @@ public class Empresa {
     public static String NOMBRE;
 
     public static void load() {
-        NOMBRE = (String) ((JSONObject)WebAppApplication.CONFIG.get("Empresa")).get("Nombre");
+        NOMBRE = (String) ((JSONObject) WebAppApplication.getCONFIG().get("Empresa")).get("Nombre");
     }
 }

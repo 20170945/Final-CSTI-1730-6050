@@ -11,7 +11,11 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class WebAppApplication {
-    public static JSONObject CONFIG = null;
+    private static JSONObject CONFIG = null;
+
+    public static JSONObject getCONFIG() {
+        return CONFIG;
+    }
 
     public static void main(String[] args) {
         try {
@@ -23,7 +27,7 @@ public class WebAppApplication {
             e.printStackTrace();
         }
         Empresa.load();
+        BaseDeDatos.load();
         SpringApplication.run(WebAppApplication.class, args);
     }
-
 }

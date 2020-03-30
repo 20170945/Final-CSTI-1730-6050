@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head"></head>
+<body>
+<div id="page-container" style="padding-bottom: 0">
+    <div th:replace="fragments/common :: header"></div>
+    <div class="container mt-lg-5 border">
+        <h1>Content</h1>
+        <th:block th:each="i: ${#numbers.sequence(0, 100)}">
+            <h2>NANI</h2>
+        </th:block>
+    </div>
+    <div th:replace="fragments/common :: footer"></div>
+</div>
+</body>
+</html>

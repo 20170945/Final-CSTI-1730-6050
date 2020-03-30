@@ -5,8 +5,10 @@
 
     }
   },
-  "BaseDeDatos": {
-    "User": "Generic",
-    "Pass": "Generic"
+  "Base de Datos": {
+    "IP": "10.0.0.43",
+    "Database": "Vehiculos",
+    "User": "VehiculoWebApp",
+    "Pass": "jy=ZzmPe4kAJd^su"
   }
 }
