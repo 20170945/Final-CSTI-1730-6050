@@ -11,6 +11,7 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/bootstrap-select.min.js"></script>
     <script src="/js/footer.js"></script>
+    <script src="/js/searchCondition.js"></script>
     <title th:text="${pageTitle}"></title>
 </head>
 <body>
@@ -30,7 +31,7 @@
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="/catalog">Todos</a>
-                        <a class="dropdown-item" href="#" th:each="vehiculo : ${vehiculos}" th:text="${vehiculo}"></a>
+                        <a class="dropdown-item" th:each="vehiculo : ${vehiculos}" th:text="${vehiculo}" th:href="@{'/catalog?tipo=' + ${vehiculo}}"></a>
                     </div>
                 </li>
                 <li class="nav-item">

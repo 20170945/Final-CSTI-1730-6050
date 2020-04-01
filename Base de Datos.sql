@@ -4,7 +4,7 @@
 USE VentaVehiculos;
 
 CREATE LOGIN VehiculoWebApp
-    WITH PASSWORD = 'jy=ZzmPe4kAJd^su';
+    WITH PASSWORD = N'zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]';
 go
 
 CREATE USER VehiculoWebApp FOR LOGIN VehiculoWebApp;
