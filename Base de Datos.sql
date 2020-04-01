@@ -1,7 +1,7 @@
-CREATE DATABASE Vehiculos;
-go
+-- CREATE DATABASE VentaVehiculos;
+-- go
 
-USE Vehiculos;
+USE VentaVehiculos;
 
 CREATE LOGIN VehiculoWebApp
     WITH PASSWORD = 'jy=ZzmPe4kAJd^su';
@@ -10,4 +10,4 @@ go
 CREATE USER VehiculoWebApp FOR LOGIN VehiculoWebApp;
 go
 
-GRANT CONTROL ON DATABASE :: Vehiculos TO VehiculoWebApp;
+GRANT CONTROL ON DATABASE :: VentaVehiculos TO VehiculoWebApp;

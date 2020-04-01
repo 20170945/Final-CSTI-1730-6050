@@ -9,10 +9,12 @@ import java.sql.Statement;
 
 public class BaseDeDatos {
     private static Connection CONN = null;
+    private static Statement stat;
 
     public static Connection getCONN() {
         return CONN;
     }
+    public static Statement getStat() {return stat;}
 
     public static void load() {
         JSONObject dbConfig = (JSONObject) WebAppApplication.getCONFIG().get("Base de Datos");
@@ -31,7 +33,7 @@ public class BaseDeDatos {
         }
 
         try {
-            Statement stat = CONN.createStatement();
+            stat = CONN.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
         }
