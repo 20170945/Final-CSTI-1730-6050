@@ -1,0 +1,18 @@
+html {
+    min-height: 100vh;
+}
+
+body {
+    min-height: 100vh;
+}
+
+#page-container {
+    position: relative;
+    min-height: 100vh;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}

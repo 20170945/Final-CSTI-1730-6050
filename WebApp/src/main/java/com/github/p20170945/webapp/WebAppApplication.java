@@ -12,7 +12,7 @@ import java.io.IOException;
 @SpringBootApplication
 public class WebAppApplication {
     private static JSONObject CONFIG = null;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public static JSONObject getCONFIG() {
         return CONFIG;
