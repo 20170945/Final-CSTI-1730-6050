@@ -29,7 +29,8 @@ public class BaseDeDatos {
         } catch (SQLException e) {
             System.out.println("Error en la conexión de la base de datos cargado.");
             e.printStackTrace();
-            System.exit(1);
+            if(!WebAppApplication.debug)
+                System.exit(1);
         }
 
         try {
