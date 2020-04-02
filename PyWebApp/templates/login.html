@@ -1,4 +1,40 @@
 {% extends 'base.html' %}
+{% block extrahead %}
+    {% load static %}
+    <script src="{% static "/js/md5.min.js" %}"></script>
+{% endblock %}
 {% block content %}
-    <div class="container mt-lg-5 mt-md-3">
+    <div class="container mt-lg-5 mt-md-3 border pt-3">
+        <h3>Inicial Sessión</h3>
+        <div class="dropdown-divider"></div>
+        <div class="row">
+            <form onsubmit="return login();" action="#" class="w-100 p-3 pb-0">
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <input id="username" class="col-10" type="text" placeholder="Usuario">
+                </div>
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <input id="pwd" class="col-10" type="password" placeholder="Password">
+                </div>
+                <div class="form-group row">
+                    <div class="col-10"></div>
+                    <button type="submit" class="col-1 btn btn-primary">Ingresar</button>
+                </div>
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <div id="mensaje" class="col-10">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function login() {
+            username = $('#username').val();
+            pwd = md5($('#pwd').val());
+            console.log(username);
+            console.log(pwd);
+        }
+    </script>
 {% endblock %}

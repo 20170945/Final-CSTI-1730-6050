@@ -42,3 +42,8 @@ def catalog(request):
 def login(request):
     context = presetContext(request)
     return render(request, 'login.html', context)
+
+def loginrequest(request):
+    context = presetContext(request)
+    print(request.POST)
+    return render(request, 'login.html', context)

@@ -13,6 +13,8 @@
     <script src="{% static "/js/bootstrap-select.min.js" %}"></script>
     <script src="{% static "/js/footer.js" %}"></script>
     <script src="{% static "/js/searchCondition.js" %}"></script>
+    {% block extrahead %}
+    {% endblock %}
     <title>{{ Empresa.Nombre }}</title>
 </head>
 <body onresize="refreshFooter()">
