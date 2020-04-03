@@ -29,8 +29,8 @@ def presetContext(request):
 
 def index(request):
     context = presetContext(request)
-    cursor.execute("SELECT nombre FROM Provincias;")
-    context['provincias'] = [i[0] for i in cursor.fetchall()]
+    cursor.execute("SELECT * FROM Provincias ORDER BY nombre;")
+    context['provincias'] = cursor.fetchall()
     context['marcas'] = ['Ferrari','Mercedes','Magia']
     context['years'] = range(1970, datetime.now().year + 2)
     return render(request, 'index.html', context)
@@ -38,8 +38,8 @@ def index(request):
 
 def catalog(request):
     context = presetContext(request)
-    cursor.execute("SELECT nombre FROM Provincias;")
-    context['provincias'] = [i[0] for i in cursor.fetchall()]
+    cursor.execute("SELECT * FROM Provincias ORDER BY nombre;")
+    context['provincias'] = cursor.fetchall()
     context['title'] += ' - Cátalogo'
     context['marcas'] = ['Ferrari', 'Mercedes', 'Magia']
     return render(request, 'catalog.html', context)

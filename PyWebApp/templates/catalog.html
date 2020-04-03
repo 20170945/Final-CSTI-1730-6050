@@ -73,7 +73,7 @@
                                 title="Todas las provincias" data-live-search="true">
                             {#                            <option value="all">Todas las Provincias</option>#}
                             {% for provincia in provincias %}
-                                <option>{{ provincia }}</option>
+                                <option value="{{ provincia.0 }}">{{ provincia.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>

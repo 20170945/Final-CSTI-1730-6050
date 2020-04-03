@@ -1,6 +1,15 @@
 var modelo = null;
 var marcaSelect = null;
 
+function loadModeloData() {
+    if (marcaSelect.val().length == 2) {
+        modelo.append('<option>a</option>');
+    } else if (marcaSelect.val().length == 1) {
+        modelo.append('<option>b</option>');
+        modelo.append('<option>c</option>');
+    }
+}
+
 $(document).ready(function () {
     modelo = $('#modelo');
     marcaSelect = $('#marca.selectpicker');
@@ -12,12 +21,7 @@ $(document).ready(function () {
         if (marcaSelect.val().length == 0) {
             modelo.prop('disabled', true);
         } else {
-            if (marcaSelect.val().length == 2) {
-                modelo.append('<option>a</option>');
-            } else if (marcaSelect.val().length == 1) {
-                modelo.append('<option>b</option>');
-                modelo.append('<option>c</option>');
-            }
+            loadModeloData();
             modelo.prop('disabled', false);
         }
         modelo.selectpicker('refresh');
