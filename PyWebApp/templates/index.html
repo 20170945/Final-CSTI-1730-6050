@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% block extrahead %}
+    {% load static %}
+    <script src="{% static "/js/searchCondition.js" %}"></script>
+{% endblock %}
 {% block content %}
     <div class="container mt-lg-5 mt-md-3">
         <div class="row">
@@ -18,16 +22,17 @@
                 <div class="form-group row">
                     <label for="marca" class="col-sm-2 col-form-label">Marca:</label>
                     <div class="col-sm-10">
-                        <select name="marca" class="form-control selectpicker" id="marca" data-live-search="true">
-                            <option value="all">Todos</option>
-                            <option th:each="marca : ${marcas}" th:text="${marca}"></option>
+                        <select name="marca" class="form-control selectpicker" title="Todos" multiple id="marca" data-live-search="true">
+                            {% for marca in marcas %}
+                                <option>{{ marca }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="modelo" class="col-sm-2 col-form-label">Modelo:</label>
                     <div class="col-sm-10">
-                        <select name="modelo" class="form-control selectpicker" id="modelo" data-live-search="true">
+                        <select name="modelo" class="form-control selectpicker" title="Todos" multiple id="modelo" data-live-search="true">
                             <option value="all">Todos</option>
                             <option th:each="modelo : ${modelos}" th:text="${modelo}"></option>
                         </select>
@@ -76,10 +81,10 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="modelo" class="col-sm-2 col-form-label">Lugar:</label>
+                    <label for="lugar" class="col-sm-2 col-form-label">Lugar:</label>
                     <div class="col-sm-10">
-                        <select name="lugar" class="form-control selectpicker" id="lugar" data-live-search="true">
-                            <option value="all">Todas las Provincias</option>
+                        <select name="lugar" class="form-control selectpicker" multiple id="lugar" title="Todas las provincias" data-live-search="true">
+{#                            <option value="all">Todas las Provincias</option>#}
                             {% for provincia in provincias %}
                                 <option>{{ provincia }}</option>
                             {% endfor %}

@@ -8,33 +8,58 @@
         <h3>Inicial Sessión</h3>
         <div class="dropdown-divider"></div>
         <div class="row">
-            <form onsubmit="return login();" action="#" class="w-100 p-3 pb-0">
+            <form onsubmit="login();  return false;" class="w-100 p-3 pb-0">
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <input id="username" class="col-10" type="text" placeholder="Usuario">
+                    <input id="username" class="col-10" type="text" placeholder="Usuario" required>
                 </div>
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <input id="pwd" class="col-10" type="password" placeholder="Password">
+                    <input id="pwd" class="col-10" type="password" placeholder="Password" required>
                 </div>
                 <div class="form-group row">
-                    <div class="col-10"></div>
-                    <button type="submit" class="col-1 btn btn-primary">Ingresar</button>
+                    <div class="col-8"></div>
+                    <button type="submit" class="col-3 btn btn-primary">Ingresar</button>
                 </div>
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <div id="mensaje" class="col-10">
+                    <div id="mensaje" class="col-10" style="color: red;">
                     </div>
                 </div>
             </form>
         </div>
     </div>
     <script type="text/javascript">
+        var ready = true;
+
         function login() {
-            username = $('#username').val();
-            pwd = md5($('#pwd').val());
-            console.log(username);
-            console.log(pwd);
+            if (ready) {
+                ready = false;
+                let username = $('#username').val();
+                let pwd = md5($('#pwd').val()).toUpperCase();
+                $.ajax({
+                    type: "POST",
+                    url: "/loginrequest",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                        state: "inactive",
+                        user: username,
+                        pwd: pwd
+                    },
+                    success: function (msg) {
+                        if(msg!='fail') {
+                            window.location.href = "/";
+                        } else {
+                            $('#pwd').val('');
+                            document.getElementById('mensaje').innerHTML = 'La contraseña introducida es inválida.'
+                        }
+                        ready = true;
+                    },
+                    error: function () {
+                        ready=true;
+                    }
+                })
+            }
         }
     </script>
 {% endblock %}

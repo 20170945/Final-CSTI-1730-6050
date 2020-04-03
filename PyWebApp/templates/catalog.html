@@ -1,10 +1,96 @@
 {% extends 'base.html' %}
+{% block extrahead %}
+    {% load static %}
+    <script src="{% static "/js/searchCondition.js" %}"></script>
+    <script src="{% static "/js/nouislider.min.js" %}"></script>
+    <script src="{% static "/js/catalog.js" %}"></script>
+    <link rel="stylesheet" href="{% static "/css/nouislider.min.css" %}">
+{% endblock %}
 {% block content %}
-    <div class="container mt-lg-5 border">
-        <h1>Content</h1>
-        <div class="dropdown-divider"></div>
-        <div>
-
+    <div class="container-fluid mt-lg-3">
+        <div class="row">
+            <nav class="border-right col-lg-3 col-md-12">
+                <h1>Datas Generales</h1>
+                <div class="dropdown-divider"></div>
+                <div class="form-group row">
+                    <label for="estado" class="col-sm-2 col-form-label">Estado:</label>
+                    <div class="col-sm-10">
+                        <select name="estado" class="form-control selectpicker" id="estado">
+                            <option value="all">Nuevo/Usado</option>
+                            <option>Nuevo</option>
+                            <option>Usado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="marca" class="col-sm-2 col-form-label">Marca:</label>
+                    <div class="col-sm-10">
+                        <select name="marca" class="form-control selectpicker" title="Todos" multiple id="marca"
+                                data-live-search="true">
+                            {% for marca in marcas %}
+                                <option>{{ marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="modelo" class="col-sm-2 col-form-label">Modelo:</label>
+                    <div class="col-sm-10">
+                        <select name="modelo" class="form-control selectpicker" title="Todos" multiple id="modelo"
+                                data-live-search="true">
+                            <option value="all">Todos</option>
+                            <option th:each="modelo : ${modelos}" th:text="${modelo}"></option>
+                        </select>
+                    </div>
+                </div>
+                {#años#}
+                <div class="row">
+                    <label id="showyearrange" for="yearslider" class="col-sm-12 col-form-label"></label>
+                </div>
+                <div class="row pl-5 pr-5">
+                    <div id="yearslider" class="align-content-center col-sm-12"></div>
+                </div>
+                <div class="form-group row mt-3">
+                    <label for="priceA" class="col-sm-2 col-form-label">Precio:</label>
+                    <div class="col-sm-10">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <input name="price" min="0" value="0" class="form-control selectpicker" id="priceA"
+                                       type="number">
+                            </div>
+                            <label for="priceB" class="col-sm-2 col-form-label">hasta</label>
+                            <div class="col-sm-5">
+                                <input name="price" min="0" value="0" class="form-control selectpicker" id="priceB"
+                                       type="number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="lugar" class="col-sm-2 col-form-label">Lugar:</label>
+                    <div class="col-sm-10">
+                        <select name="lugar" class="form-control selectpicker" multiple id="lugar"
+                                title="Todas las provincias" data-live-search="true">
+                            {#                            <option value="all">Todas las Provincias</option>#}
+                            {% for provincia in provincias %}
+                                <option>{{ provincia }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            <div class="dropdown-divider"></div>
+                <h1>Datas Específicos</h1>
+                <div class="dropdown-divider"></div>
+            </nav>
+            <div class="col-lg-9 col-md-12">
+                Mostrando
+                <div id="mostrar" class="d-inline font-weight-bold">MSG</div>
+                de
+                <div id="cantResult" class="d-inline font-weight-bold">MSG</div>
+                resultados.
+                <div class="dropdown-divider"></div>
+                <div></div>
+            </div>
         </div>
     </div>
 {% endblock %}

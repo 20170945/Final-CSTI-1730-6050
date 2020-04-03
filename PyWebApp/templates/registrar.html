@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block extrahead %}
+    {% load static %}
+    <script src="{% static "/js/md5.min.js" %}"></script>
+{% endblock %}
+{% block content %}
+    <div class="container mt-lg-5 mt-md-3 border pt-3">
+        <h3>Registración</h3>
+        <div class="dropdown-divider"></div>
+        <div class="row">
+            <form onsubmit="registrar();  return false;" class="w-100 p-3 pb-0">
+                <h4>Datos de ingreso</h4>
+                <div class="form-group row mt-3">
+                    <label for="username" class="col-sm-2 col-form-label">Nombre de Usuario:</label>
+                    <div class="col-sm-10">
+                        <input id="username" class="col-12" type="text" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="pwdA" class="col-sm-2 col-form-label">Contraseña:</label>
+                    <div class="col-sm-10">
+                        <input id="pwdA" class="col-12" type="password" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="pwdB" class="col-sm-2 col-form-label">Repita la contraseña:</label>
+                    <div class="col-sm-10">
+                        <input id="pwdB" class="col-12" type="password" required>
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <h4>Datos generales</h4>
+                <div class="form-group row">
+                    <label for="nombre" class="col-sm-2 col-form-label">Nombre:</label>
+                    <div class="col-sm-10">
+                        <input id="nombre" class="col-12" type="text" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary float-right">Registrar</button>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var ready = true;
+
+        function registrar() {
+            if (ready) {
+                ready = false;
+                let username = $('#username').val();
+                let pwd = md5($('#pwd').val()).toUpperCase();
+                $.ajax({
+                    type: "POST",
+                    url: "/registerrequest",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                        state: "inactive",
+                        user: username,
+                        pwd: pwd
+                    },
+                    success: function (msg) {
+                        alert(msg)
+                        ready = true;
+                    },
+                    error: function () {
+                        ready=true;
+                    }
+                })
+            }
+        }
+    </script>
+{% endblock %}

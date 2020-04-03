@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static "/css/bootstrap.min.css" %}">
+    <link href="{% static "/favicon.ico" %}" rel="icon" type="image/x-icon"/>
     <link rel="stylesheet" href="{% static "/css/bootstrap-select.min.css" %}">
     <link rel="stylesheet" href="{% static "/css/style.css" %}">
     <script src="{% static "/js/jquery.min.js" %}"></script>
@@ -12,10 +13,9 @@
     <script src="{% static "/js/bootstrap.min.js" %}"></script>
     <script src="{% static "/js/bootstrap-select.min.js" %}"></script>
     <script src="{% static "/js/footer.js" %}"></script>
-    <script src="{% static "/js/searchCondition.js" %}"></script>
     {% block extrahead %}
     {% endblock %}
-    <title>{{ Empresa.Nombre }}</title>
+    <title>{{ title }}</title>
 </head>
 <body onresize="refreshFooter()">
 <div id="page-container" style="padding-bottom: 0">
@@ -41,13 +41,13 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Directorio</a>
+                        <a class="nav-link" href="/directorio">Directorio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Vende</a>
+                        <a class="nav-link" href="/vende">Vende</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contacto</a>
+                        <a class="nav-link" href="/contacto">Contacto</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -68,7 +68,7 @@
                             <a class="nav-link" href="/login">Iniciar Sessión</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Registrar</a>
+                            <a class="nav-link" href="/registrar">Registrar</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -84,7 +84,7 @@
             <div class="row">
                 <div class="col-md-6 mt-md-0 mt-3">
                     <h5>{{ Empresa.Nombre }}</h5>
-                    <p>Here you can use rows and columns to organize your footer content.</p>
+                    <p>{{ Empresa.Descripcion }}</p>
                 </div>
                 <hr class="clearfix w-100 d-md-none pb-3">
                 <div class="col-md-3 mb-md-0 mb-3">
@@ -126,7 +126,7 @@
             </div>
         </div>
         <div class="container d-sm-none text-center text-md-left">
-            <p>Hi</p>
+            <p>{{ Empresa.Nombre }}</p>
         </div>
     </footer>
 </div>
