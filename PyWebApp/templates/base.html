@@ -36,7 +36,7 @@
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="/catalog">Todos</a>
                             {% for tipo in tipos %}
-                                <a class="dropdown-item" href="/catalog?tipo={{ tipo }}">{{ tipo }}</a>
+                                <a class="dropdown-item" href="/catalog?tipo={{ tipo.0 }}">{{ tipo.1 }}</a>
                             {% endfor %}
                         </div>
                     </li>
@@ -52,6 +52,11 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     {% if logged %}
+                        {% if admin %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="/panel/admin">Panel Administrativo</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                                 Perfil
@@ -60,7 +65,9 @@
                                  style="padding: 15px; padding-bottom: 10px;">
                                 <a class="dropdown-item" href="#">Ver perfil</a>
                                 <a class="dropdown-item" href="#">Editar perfil</a>
-                                <a class="dropdown-item" href="#">Cerrar sección</a>
+                                <a class="dropdown-item"
+                                   onclick="document.cookie = 'LoginID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';"
+                                   href="/">Cerrar sección</a>
                             </div>
                         </li>
                     {% else %}

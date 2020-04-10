@@ -8,7 +8,7 @@
   },
   "Base de Datos": {
     "IP": "10.0.0.43",
-    "Database": "VentaVehiculos",
+    "Database": "VentaVehiculo",
     "User": "VehiculoWebApp",
     "Pass": "zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]"
   }

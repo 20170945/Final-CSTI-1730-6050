@@ -11,11 +11,17 @@
             <form onsubmit="login();  return false;" class="w-100 p-3 pb-0">
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <input id="username" class="col-10" type="text" placeholder="Usuario" required>
+                    <div class="col-10">
+                        {{ msg }}
+                    </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <input id="pwd" class="col-10" type="password" placeholder="Password" required>
+                    <input id="username" class="col-10 form-control" type="text" placeholder="Usuario" required>
+                </div>
+                <div class="form-group row">
+                    <div class="col-1"></div>
+                    <input id="pwd" class="col-10 form-control" type="password" placeholder="Password" required>
                 </div>
                 <div class="form-group row">
                     <div class="col-8"></div>
@@ -23,7 +29,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-1"></div>
-                    <div id="mensaje" class="col-10" style="color: red;">
+                    <div id="mensaje" class="col-10 text-danger">
                     </div>
                 </div>
             </form>
@@ -31,6 +37,9 @@
     </div>
     <script type="text/javascript">
         var ready = true;
+        $('.form-control').change(function () {
+            $(this).removeClass('is-invalid')
+        });
 
         function login() {
             if (ready) {
@@ -46,17 +55,18 @@
                         user: username,
                         pwd: pwd
                     },
-                    success: function (msg) {
-                        if(msg!='fail') {
+                    success: function (result) {
+                        if (result['success']) {
                             window.location.href = "/";
                         } else {
                             $('#pwd').val('');
-                            document.getElementById('mensaje').innerHTML = 'La contraseña introducida es inválida.'
+                            document.getElementById('mensaje').innerHTML = result['error']
+                            $(result['is-invalid']).addClass("is-invalid")
                         }
                         ready = true;
                     },
                     error: function () {
-                        ready=true;
+                        ready = true;
                     }
                 })
             }

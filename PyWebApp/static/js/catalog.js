@@ -22,6 +22,7 @@ $(document).ready(function () {
             datosDict[temp[0]]=[temp[1]]
         }
     }
+    console.log(datosDict);
     if('estado' in datosDict) {
         $("#estado").val(datosDict['estado'][0]);
     }
@@ -46,6 +47,10 @@ $(document).ready(function () {
     if('lugar' in datosDict) {
         $('#lugar').selectpicker('val', datosDict['lugar']);
         $('#lugar').selectpicker('refresh');
+    }
+    if('tipo' in datosDict) {
+        $('#tipo').selectpicker('val', datosDict['tipo'][0]);
+        $('#tipo').selectpicker('refresh');
     }
     slider = document.getElementById('yearslider');
     yearRange = document.getElementById('showyearrange');
