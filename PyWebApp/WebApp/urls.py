@@ -17,4 +17,6 @@ urlpatterns = [
     path('perfil/<int:id>', views.perfil),
     path('editar/perfil', views.editarPerfil),
     path('panel/admin', views.panelAdmin),
+    path('panel/admin/<str:path>', views.panelAdminPath),
+    path('api/<str:table>/<str:option>', views.api),
 ]

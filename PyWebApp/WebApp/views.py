@@ -6,6 +6,7 @@ import pyodbc
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
 
 # Create your views here.
@@ -33,7 +34,8 @@ def presetContext(request):
         datos = cursor.fetchone()
         preset['logged'] = (datos is not None)
         if preset['logged']:
-            preset['admin'] = (cursor.execute("SELECT usuario FROM Admin WHERE usuario='%s'" % (datos[0])).rowcount !=0)
+            preset['admin'] = (
+                    cursor.execute("SELECT usuario FROM Admin WHERE usuario='%s'" % (datos[0])).rowcount != 0)
     return preset
 
 
@@ -41,7 +43,8 @@ def index(request):
     context = presetContext(request)
     cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
     context['ciudades'] = cursor.fetchall()
-    context['marcas'] = ['Ferrari', 'Mercedes', 'Magia']
+    cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+    context['marcas'] = cursor.fetchall()
     context['years'] = range(1970, datetime.now().year + 2)
     return render(request, 'index.html', context)
 
@@ -51,7 +54,8 @@ def catalog(request):
     cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
     context['ciudades'] = cursor.fetchall()
     context['title'] += ' - Cátalogo'
-    context['marcas'] = ['Ferrari', 'Mercedes', 'Magia']
+    cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+    context['marcas'] = cursor.fetchall()
     return render(request, 'catalog.html', context)
 
 
@@ -65,6 +69,7 @@ def login(request):
 def registrar(request):
     context = presetContext(request)
     context['title'] += ' - Registración'
+    context['base'] = 'base.html'
     return render(request, 'registrar.html', context)
 
 
@@ -144,5 +149,57 @@ def registerRequest(request):
         dbmssql.commit()  # <- Esta linea es la más importante
     return JsonResponse(response)
 
+
 def panelAdmin(request):
-    print('yes')
+    context = presetContext(request)
+    if not context['admin']:
+        return HttpResponseForbidden()
+    context['title'] = 'Panel Administrativo'
+    return render(request, 'admin.html', context)
+
+
+def panelAdminPath(request, path):
+    context = presetContext(request)
+    context['title'] = 'Panel Administrativo'
+    if not context['admin']:
+        return HttpResponseForbidden()
+    elif path == 'vehiculo':
+        cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+        context['marcas'] = cursor.fetchall()
+        return render(request, 'adminVehiculo.html', context)
+    elif path == 'empresa':
+        return render(request, 'admin.html', context)
+    elif path == 'usuarios':
+        return render(request, 'admin.html', context)
+    elif path == 'registrar':
+        context['base'] = 'basePanel.html'
+        return render(request, 'registrar.html', context)
+    return HttpResponseNotFound()
+
+
+def api(request, table, option):
+    context = presetContext(request)
+    response = {'success': False}
+    if option == 'insert':
+        if context['admin']:
+            if table == 'Marca' and len(request.POST['nameMarca']) > 0:
+                cursor.execute("INSERT INTO Marca(nombre, descripcion) VALUES ('%s','%s');" % (
+                    request.POST['nameMarca'], request.POST['descMarca']))
+                dbmssql.commit()
+                response['success'] = True
+            return JsonResponse(response)
+    elif option == 'all':
+        if table=='Marca':
+            cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+        else:
+            cursor.execute("SELECT * FROM %s;" % (table))
+        response['data'] = [[j for j in i] for i in cursor.fetchall()]
+        response['success'] = True
+    elif table=='Marca' and option=='getDesc':
+        cursor.execute("SELECT descripcion FROM Marca WHERE idMarca=%s;" % (request.POST['id']))
+        response['desc'] = cursor.fetchone()[0]
+        response['success'] = True
+    elif table=='Marca' and option=='updateDesc':
+        dbmssql.commit()
+        response['success'] = True
+    return JsonResponse(response)

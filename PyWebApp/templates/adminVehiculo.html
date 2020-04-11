@@ -1,0 +1,234 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Vehículos</h1>
+        <div class="dropdown-divider"></div>
+        <div class="form-group row">
+            <label for="marca" class="col-sm-1 col-form-label">Marca:</label>
+            <div class="col-sm-9">
+                <select name="marca" class="form-control selectpicker" title="Ninguno" id="marca"
+                        data-live-search="true">
+                    {% for marca in marcas %}
+                        {% if forloop.first %}
+                            <option selected value="{{ marca.0 }}">{{ marca.1 }}</option>
+                        {% else %}
+                            <option value="{{ marca.0 }}">{{ marca.1 }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="form-control" data-toggle="modal" data-target="#addMarca">Añadir</button>
+{#                <div class="row">#}
+{#                    <a href="#" class="col-6">#}
+{#                        <button type="button" class="form-control" data-toggle="modal" data-target="#addMarca">Añadir#}
+{#                        </button>#}
+{#                    </a>#}
+{#                    <a href="#" class="col-6">#}
+{#                        <button class="form-control">Eliminar</button>#}
+{#                    </a>#}
+{#                </div>#}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="descripcion" class="col-sm-1 col-form-label">Descripción:</label>
+            <div class="col-sm-9">
+                <textarea maxlength="255" id="descripcion" class="form-control">{{ marcas.0.2 }}</textarea>
+            </div>
+            <a href="#" class="col-sm-2">
+                <button class="form-control">Guardar</button>
+            </a>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="row">
+            <h2 class="col-10">Modelos</h2>
+            <button type="button" class="form-control col-2" data-toggle="modal" data-target="#addModelo">Añadir
+            </button>
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Año</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th>1</th>
+                <th>1</th>
+                <th>1</th>
+                <th style="max-width: 50px">1</th>
+                <th>1</th>
+            </tr>
+            <tr>
+                <th>2</th>
+                <th>2</th>
+                <th>2</th>
+                <th>2</th>
+                <th>2</th>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    {# marca #}
+    <div class="modal fade" id="addMarca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nueva marca</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-12">
+                            <input id="nameMarca" placeholder="Nombre" class="col-12 form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col">
+                            <label for="descMarca" class="col-form-label">Descripción:</label>
+                            <textarea id="descMarca" class="form-control" type="text"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="submitMarca();">Añadir</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanMarca();">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {# fin #}
+    {# modelo #}
+    <div class="modal fade" id="addModelo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nuevo modelo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-12">
+                            <input id="nameModelo" placeholder="Nombre" class="col-12 form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col">
+                            <label for="descModelo" class="col-form-label">Descripción:</label>
+                            <textarea id="descModelo" class="form-control" type="text"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="alert('NANI?');">Añadir</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanMarca();">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {# fin #}
+    <script type="text/javascript">
+        var ready = true;
+
+        function loadDesc(idValue) {
+            $.ajax({
+                type: "POST",
+                url: "/api/Marca/getDesc",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    id: idValue
+                },
+                success: function (result) {
+                    if (result['success']) {
+                        $('#descripcion').val(result['desc']);
+                    }
+                    ready = true;
+                },
+                error: function () {
+                    ready = true;
+                }
+            });
+        }
+
+        $('#marca').change(function () {
+            loadDesc($(this).val())
+        });
+
+        function cleanMarca() {
+            $("#nameMarca").val('')
+            $("#descMarca").val('')
+        }
+
+        function reloadMarca() {
+            $.ajax({
+                type: "POST",
+                url: "/api/Marca/all",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive"
+                },
+                success: function (result) {
+                    let selectVal = $("#marca").val();
+                    if (result['success']) {
+                        let marcaSelect = $("#marca");
+                        marcaSelect.empty();
+                        result['data'].forEach(e => marcaSelect.append('<option value="' + e[0] + '">' + e[1] + "</option>"));
+                        marcaSelect.selectpicker('refresh');
+                        marcaSelect.selectpicker('val', selectVal);
+                    }
+                    ready = true;
+                },
+                error: function () {
+                    ready = true;
+                }
+            });
+        }
+
+        function submitMarca() {
+            ready = false;
+            if ($('#nameMarca').val().length == 0) {
+                alert('El nombre no puede estar vacío.');
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/api/Marca/insert",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    nameMarca: $('#nameMarca').val(),
+                    descMarca: $('#descMarca').val()
+                },
+                success: function (result) {
+                    if (result['success']) {
+                        $('#addMarca').modal('toggle');
+                        reloadMarca();
+                        cleanMarca();
+                    }
+                    ready = true;
+                },
+                error: function () {
+                    ready = true;
+                }
+            })
+        }
+
+        {#reloadMarca();#}
+    </script>
+{% endblock %}

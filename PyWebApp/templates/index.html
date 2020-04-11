@@ -24,7 +24,7 @@
                     <div class="col-sm-10">
                         <select name="marca" class="form-control selectpicker" title="Todos" multiple id="marca" data-live-search="true">
                             {% for marca in marcas %}
-                                <option>{{ marca }}</option>
+                                <option value="{{ marca.0 }}">{{ marca.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>

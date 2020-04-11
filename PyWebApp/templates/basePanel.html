@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static "/css/bootstrap.min.css" %}">
+    <link href="{% static "/favicon.ico" %}" rel="icon" type="image/x-icon"/>
+    <link rel="stylesheet" href="{% static "/css/bootstrap-select.min.css" %}">
+    <link rel="stylesheet" href="{% static "/css/style.css" %}">
+    <script src="{% static "/js/jquery.min.js" %}"></script>
+    <script src="{% static "/js/popper.min.js" %}"></script>
+    <script src="{% static "/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "/js/bootstrap-select.min.js" %}"></script>
+{#    <script src="{% static "/js/footer.js" %}"></script>#}
+    {% block extrahead %}
+    {% endblock %}
+    <title>{{ title }}</title>
+</head>
+<body>
+<div id="page-container" style="padding-bottom: 0">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            {% if admin %}
+                <a class="navbar-brand" href="/panel/admin"><h1>{{ Empresa.Nombre }}</h1></a>
+            {% else %}
+                <a class="navbar-brand" href="/panel/venta"><h1>{{ Empresa.Nombre }}</h1></a>
+            {% endif %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    {% if admin %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/panel/admin/vehiculo">Vehículos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/panel/admin/empresa">Empresas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/panel/admin/usuarios">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/panel/admin/registrar">Registrar</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="/">Salir</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="pb-lg-4 mb-lg-3 pb-md-4 mb-md-3 pb-xl-4 mb-xl-3 pb-sm-0 mb-sm-0">
+        {% block content %}
+        {% endblock %}
+    </div>
+    {#    <footer id="footer" class="text-light bg-dark pt-lg-4 pt-md-4 pt-xl-4 pt-sm-0">#}
+    {#        <div class="container d-none d-sm-block text-center text-md-left">#}
+    {#            <div class="row">#}
+    {#                <div class="col-md-6 mt-md-0 mt-3">#}
+    {#                    <h5>{{ Empresa.Nombre }}</h5>#}
+    {#                    <p>{{ Empresa.Descripcion }}</p>#}
+    {#                </div>#}
+    {#                <hr class="clearfix w-100 d-md-none pb-3">#}
+    {#                <div class="col-md-3 mb-md-0 mb-3">#}
+    {#                    <h5 class="text-uppercase">Links</h5>#}
+    {#                    <ul class="list-unstyled">#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 1</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 2</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 3</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 4</a>#}
+    {#                        </li>#}
+    {#                    </ul>#}
+    {##}
+    {#                </div>#}
+    {#                <div class="col-md-3 mb-md-0 mb-3">#}
+    {#                    <h5 class="text-uppercase">Links</h5>#}
+    {##}
+    {#                    <ul class="list-unstyled">#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 1</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 2</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 3</a>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a href="#!">Link 4</a>#}
+    {#                        </li>#}
+    {#                    </ul>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#        <div class="container d-sm-none text-center text-md-left">#}
+    {#            <p>{{ Empresa.Nombre }}</p>#}
+    {#        </div>#}
+    {#    </footer>#}
+</div>
+</body>
+</html>

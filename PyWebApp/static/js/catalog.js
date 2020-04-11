@@ -22,7 +22,6 @@ $(document).ready(function () {
             datosDict[temp[0]]=[temp[1]]
         }
     }
-    console.log(datosDict);
     if('estado' in datosDict) {
         $("#estado").val(datosDict['estado'][0]);
     }

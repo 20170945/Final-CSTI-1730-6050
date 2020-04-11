@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends base %}
 {% block extrahead %}
     {% load static %}
     <script src="{% static "/js/md5.min.js" %}"></script>
@@ -76,7 +76,6 @@
             if (ready) {
                 ready = false;
                 if ($('#pwdA').val() == $('#pwdB').val()) {
-
                     $.ajax({
                         type: "POST",
                         url: "/registerrequest",
@@ -92,13 +91,25 @@
                             email: $('#email').val()
                         },
                         success: function (result) {
-                            if (result['cedula'] && result['username'])
-                                window.location.href = "/login";
-                            else{
+                            if (result['cedula'] && result['username']) {
+                                {% if admin %}
+                                    alert("Usuario [" + $('#username').val() + "] registrado satisfactoriamente.");
+                                    $('#username').val('');
+                                    $('#pwdA').val('');
+                                    $('#pwdB').val('');
+                                    $('#cedula').val('');
+                                    $('#nombre').val('');
+                                    $('#apellido').val('');
+                                    $('#direccion').val('');
+                                    $('#email').val('');
+                                {% else %}
+                                    window.location.href = "/login";
+                                {% endif %}
+                            } else {
                                 console.log(result)
-                                for(let key in result) {
-                                    if(!result[key]) {
-                                        $('#'+key).addClass('is-invalid');
+                                for (let key in result) {
+                                    if (!result[key]) {
+                                        $('#' + key).addClass('is-invalid');
                                     }
                                 }
                                 document.getElementById('mensaje').innerHTML = 'Hay datos inválidos.'
