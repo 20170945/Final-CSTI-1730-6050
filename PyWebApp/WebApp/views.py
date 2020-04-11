@@ -189,6 +189,11 @@ def api(request, table, option):
                 response['success'] = True
             return JsonResponse(response)
     elif option == 'all':
+        arguments = []
+        for i in request.GET.keys():
+            arguments.append('('+" OR ".join([i+'='+j for j in request.GET.getlist(i)])+')')
+        arguments = " AND ".join(arguments)
+        print(arguments)
         if table=='Marca':
             cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
         else:
