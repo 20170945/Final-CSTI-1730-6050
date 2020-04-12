@@ -36,7 +36,7 @@
                 <textarea maxlength="255" id="descripcion" class="form-control">{{ marcas.0.2 }}</textarea>
             </div>
             <a href="#" class="col-sm-2">
-                <button class="form-control">Guardar</button>
+                <button class="form-control" onclick="updateMarcaDesc();">Guardar</button>
             </a>
         </div>
         <div class="dropdown-divider"></div>
@@ -155,16 +155,14 @@
         function updateMarcaDesc() {
             $.ajax({
                 type: "POST",
-                url: "/api/Marca/getDesc",
+                url: "/api/Marca/update",
                 data: {
                     csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
                     state: "inactive",
-                    idMarca: idValue
+                    marcaID: $('#marca').val(),
+                    desc: $('#descripcion').val()
                 },
                 success: function (result) {
-                    if (result['success']) {
-                        $('#descripcion').val(result['desc']);
-                    }
                     ready = true;
                 },
                 error: function () {
@@ -307,11 +305,11 @@
                         let tableBody = $(".tModelos");
                         tableBody.empty();
                         result['data'].forEach(e => tableBody.append('<tr>' +
-                            '<th>'+e[5]+'</th>' +
-                            '<th>'+e[4]+'</th>' +
-                            '<th>'+e[3]+'</th>' +
-                            '<th>'+e[6]+'</th>' +
-                            '<th>'+'-'+'</th>' +
+                            '<td>'+e[5]+'</td>' +
+                            '<td>'+e[4]+'</td>' +
+                            '<td>'+e[3]+'</td>' +
+                            '<td>'+e[6]+'</td>' +
+                            '<td>'+'-'+'</td>' +
                             '</tr>'));
                     }
                     ready = true;

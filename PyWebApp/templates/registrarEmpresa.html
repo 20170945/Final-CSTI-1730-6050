@@ -6,39 +6,7 @@
         <div class="row">
             <form onsubmit="registrar();  return false;" class="w-100 p-3 pb-0">
                 <div id="mensaje" class="text-danger"></div>
-                <h4>Datos de ingreso</h4>
-                <div class="form-group row mt-3">
-                    <label for="username" class="col-sm-2 col-form-label">Nombre de Usuario:</label>
-                    <div class="col-sm-10">
-                        <input id="username" class="col-12 form-control" type="text" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="pwdA" class="col-sm-2 col-form-label">Contraseña:</label>
-                    <div class="col-sm-10">
-                        <input id="pwdA" class="col-12 form-control" type="password" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="pwdB" class="col-sm-2 col-form-label">Repita la contraseña:</label>
-                    <div class="col-sm-10">
-                        <input id="pwdB" class="col-12 form-control" type="password" required>
-                    </div>
-                </div>
-                <div class="dropdown-divider"></div>
                 <h4>Datos generales</h4>
-                <div class="form-group row">
-                    <label for="cedula" class="col-sm-2 col-form-label">Cédula:</label>
-                    <div class="col-sm-10">
-                        <input id="cedula" class="col-12 form-control" type="text" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-2 col-form-label">Email:</label>
-                    <div class="col-sm-10">
-                        <input id="email" class="col-12 form-control" type="text" required>
-                    </div>
-                </div>
                 <div class="form-group row">
                     <label for="nombre" class="col-sm-2 col-form-label">Nombre:</label>
                     <div class="col-sm-10">
@@ -46,15 +14,15 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="apellido" class="col-sm-2 col-form-label">Apellido:</label>
-                    <div class="col-sm-10">
-                        <input id="apellido" class="col-12 form-control" type="text" required>
-                    </div>
-                </div>
-                <div class="form-group row">
                     <label for="direccion" class="col-sm-2 col-form-label">Dirección:</label>
                     <div class="col-sm-10">
                         <textarea id="direccion" class="col-12 form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="desc" class="col-sm-2 col-form-label">Descripción:</label>
+                    <div class="col-sm-10">
+                        <textarea id="desc" class="col-12 form-control" required></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary float-right">Registrar</button>
@@ -69,61 +37,22 @@
         });
 
         function registrar() {
-            if (ready) {
-                ready = false;
-                if ($('#pwdA').val() == $('#pwdB').val()) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/registerrequest",
-                        data: {
-                            csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
-                            state: "inactive",
-                            user: $('#username').val(),
-                            pwd: md5($('#pwdA').val()).toUpperCase(),
-                            cedula: $('#cedula').val(),
-                            nombre: $('#nombre').val(),
-                            apellido: $('#apellido').val(),
-                            direccion: $('#direccion').val(),
-                            email: $('#email').val()
-                        },
-                        success: function (result) {
-                            if (result['cedula'] && result['username']) {
-                                {% if admin %}
-                                    alert("Usuario [" + $('#username').val() + "] registrado satisfactoriamente.");
-                                    $('#username').val('');
-                                    $('#pwdA').val('');
-                                    $('#pwdB').val('');
-                                    $('#cedula').val('');
-                                    $('#nombre').val('');
-                                    $('#apellido').val('');
-                                    $('#direccion').val('');
-                                    $('#email').val('');
-                                {% else %}
-                                    window.location.href = "/login";
-                                {% endif %}
-                            } else {
-                                console.log(result)
-                                for (let key in result) {
-                                    if (!result[key]) {
-                                        $('#' + key).addClass('is-invalid');
-                                    }
-                                }
-                                document.getElementById('mensaje').innerHTML = 'Hay datos inválidos.'
-                                window.location.href = "#mensaje";
-                            }
-                            ready = true;
-                        },
-                        error: function () {
-                            ready = true;
-                        }
-                    })
-                } else {
-                    $('#pwdB').addClass("is-invalid");
-                    document.getElementById('mensaje').innerHTML = "Las contraseñas no concuerdan.";
-                    window.location.href = "#mensaje";
-                    ready = true;
+            $.ajax({
+                type: "POST",
+                url: "/panel/admin/empresa/registrarrequest",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    nombre: $('#nombre').val(),
+                    desc: $('#desc').val(),
+                    direccion: $('#direccion').val()
+                },
+                success: function (result) {
+                    location.href = "/panel/admin/empresa";
+                },
+                error: function () {
                 }
-            }
+            })
         }
     </script>
 {% endblock %}

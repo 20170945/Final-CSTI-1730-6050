@@ -8,12 +8,13 @@ create table Empresa
     idEmpresa   int identity
         constraint PK_Empresa primary key,
     nombre      varchar(50),
+    direccion   varchar(100),
     descripcion varchar(256)
 )
 go
 
-INSERT INTO Empresa(nombre, descripcion)
-VALUES ('Individual', 'Persona individual');
+INSERT INTO Empresa(nombre, direccion, descripcion)
+VALUES ('Individual', '', 'Persona individual');
 
 create table Usuario
 (
@@ -47,21 +48,8 @@ create table VendedorUsuario
 (
     idEmpresa      int foreign key references Empresa (idEmpresa),
     cedulaVendedor varchar(50) foreign key references Persona (cedula),
-    CONSTRAINT PK_VendedorUsuario primary key (idEmpresa, cedulaVendedor)
+    CONSTRAINT PK_VendedorUsuario primary key (cedulaVendedor)
 )
-
-
-create table EstadoVehiculo
-(
-    nombre varchar(10)
-        constraint PK_EstadoVehiculo primary key
-)
-go
-
-INSERT INTO EstadoVehiculo(nombre)
-VALUES ('Nuevo'),
-       ('Usado');
-go
 
 CREATE TABLE TipoVehiculo
 (
@@ -165,7 +153,7 @@ create table Vehiculo
         constraint PK_Vehiculo primary key,
     idModelo    int foreign key references Modelo (idModelo),
     Precio      float,
-    Estado      varchar(10) foreign key references EstadoVehiculo(nombre),
+    Nuevo       bit,
     idCiudad    int foreign key references Ciudad (idCiudad),
     descripcion varchar(255)
 )
@@ -178,21 +166,30 @@ create table Ventas
             primary key,
     idCliente  varchar(50) foreign key references Persona (Cedula),
     idVendedor varchar(50) foreign key references Persona (Cedula),
-    IdVehiculo int foreign key references Vehiculo (idVehiculo),
+    idVehiculo int foreign key references Vehiculo (idVehiculo),
     Fecha      date
 )
 go
 
 create table Anuncio
 (
-    idAnuncio       int identity
+    idAnuncio        int identity
         constraint Anuncio_pk
             primary key nonclustered,
-    idVehiculo      int foreign key references Vehiculo (idVehiculo),
+    idVehiculo       int foreign key references Vehiculo (idVehiculo),
     fechaPublicacion date,
-    fechaExpiracion date,
+    fechaExpiracion  date,
+    estado           char
 )
 go
+
+create table PedidoAnuncio
+(
+    idVehiculo int foreign key references Vehiculo (idVehiculo),
+    dias       int,
+    CONSTRAINT PK_PedidoAnuncio primary key (idVehiculo)
+
+)
 
 CREATE VIEW ModeloConTipo AS
 SELECT idModelo, idMarca, Modelo.idTipoVehiculo, TV.nombre as tipoNombre, Modelo.nombre, ano, descripcion
@@ -216,6 +213,7 @@ BEGIN
 END;
 go
 
+-- PRESET
 EXEC SP_NuevoUsuario 'admin', '81DC9BDB52D04DC20036DBD8313ED055', '1', 'Administrador', 'Sistema', '', '', 1;
 go
 
@@ -223,9 +221,47 @@ INSERT INTO Admin(usuario)
 VALUES ('admin');
 go
 
-UPDATE Usuario
-SET verificado=null
-WHERE usuario = '2';
+DELETE
+FROM Usuario
+WHERE verificado = 0;
+go
+
+
+--TODO Consultas y Funciones
+-- Consulta general de vehículos en venta ordenado por fecha.
+SELECT *
+FROM Vehiculo
+WHERE idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas)
+-- Consulta de vendedores indicado tipo (empresa o persona física) y cantidad de anuncios publicados.
+-- Consulta general de usuarios (clientes).
+SELECT *
+FROM Persona
+WHERE cedula IN (SELECT Ventas.idCliente FROM Ventas)
+-- Consulta de venta por año, mes, marca, ciudad.
+-- Consulta de publicación indicando costo, tiempo de publicación.
+-- Consulta de vendedores con mayor venta de vehículos.
+-- Función que actualice el estado del anuncio de disponible (D) a vendido (V).
+CREATE PROCEDURE SP_AnuncioVendido @idAnuncio int as
+BEGIN
+    UPDATE Anuncio SET estado='V' WHERE idAnuncio = @idAnuncio;
+END;
+go
+-- Función que ingrese una publicación de anuncio.
+
+-- Función que elimine una publicación de anuncio.
+
+-- Función que muestre los vehículos por marca (se debe enviar la marca como parámetro).
+CREATE FUNCTION vehiculosPorMarca(@marca int)
+    RETURNS TABLE
+        AS RETURN
+            (
+                SELECT *
+                FROM Vehiculo
+                         INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
+                WHERE M.idMarca = @marca
+            );
+go
+
 
 -- CREATE LOGIN VehiculoWebApp
 --     WITH PASSWORD = N'zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]';

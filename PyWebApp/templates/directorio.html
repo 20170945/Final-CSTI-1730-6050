@@ -1,10 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="container mt-lg-5 border">
-        <h1>Content</h1>
+        <h1>Empresas</h1>
         <div class="dropdown-divider"></div>
-        <div>
-
-        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Dirección</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for empresa in empresas %}
+                {% if not forloop.first %}
+                <tr>
+                    <td>{{ empresa.1 }}</td>
+                    <td>{{ empresa.3 }}</td>
+                    <td>{{ empresa.2 }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

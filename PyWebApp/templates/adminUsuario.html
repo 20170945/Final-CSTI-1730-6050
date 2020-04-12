@@ -3,5 +3,137 @@
     <div class="container-fluid">
         <h1>Usuarios</h1>
         <div class="dropdown-divider"></div>
+        <div class="form-group row">
+            <label for="cedula" class="col-sm-1 col-form-label">Cédula:</label>
+            <div class="col-sm-11">
+                <select name="cedula" class="form-control selectpicker" title="Ninguno" id="cedula"
+                        data-live-search="true">
+                    {% for cedula in cedulas %}
+                        <option>{{ cedula.0 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="name" class="col-sm-1 col-form-label">Nombre:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="lastname" class="col-sm-1 col-form-label">Apellido:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="lastname" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="user" class="col-sm-1 col-form-label">Usuario:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="user" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="email" class="col-sm-1 col-form-label">Email:</label>
+            <div class="col-sm-11">
+                <input type="text" id="email" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="direccion" class="col-sm-1 col-form-label">Dirección:</label>
+            <div class="col-sm-11">
+                <textarea id="direccion" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="admin" class="col-sm-1 col-form-label">Admin:</label>
+            <div class="col-sm-1">
+                <input type="checkbox" id="admin" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="empresa" class="col-sm-1 col-form-label">Vendedor de:</label>
+            <div class="col-sm-11">
+                <select class="form-control selectpicker" title="Ninguno" id="empresa"
+                        data-live-search="true">
+                    <option selected value="None">Ninguno</option>
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa.0 }}">[{{ empresa.0 }}] {{ empresa.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <button type="button" class="form-control" onclick="guardar();">Guardar</button>
+            </div>
+        </div>
+        <h5>Transacciones</h5>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Comprador</th>
+                <th scope="col">Vendedor</th>
+                <th scope="col">idVehiculo</th>
+                <th scope="col">Precio</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody class="tModelos">
+            </tbody>
+        </table>
     </div>
+
+
+
+    <script type="text/javascript">
+        $("#cedula").change(function () {
+            $.ajax({
+                type: "POST",
+                url: "/panel/admin/usuarios/fetch",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    cedula: $(this).val()
+                },
+                success: function (result) {
+                    console.log(result);
+                    $("#name").val(result['nombre']);
+                    $("#lastname").val(result['apellido']);
+                    $("#user").val(result['usuario']);
+                    $("#direccion").val(result['direccion']);
+                    $("#email").val(result['email']);
+                    $("#admin").prop('checked', result['admin']);
+                    $("#empresa").selectpicker('val', result['empresa']);
+                },
+                error: function () {
+                }
+            })
+        });
+
+        function guardar() {
+            if($('#cedula').val().length==0)
+                return;
+            $.ajax({
+                type: "POST",
+                url: "/panel/admin/usuarios/update",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    cedula: $('#cedula').val(),
+                    email: $("#email").val(),
+                    direccion: $("#direccion").val(),
+                    admin: $("#admin").is(":checked"),
+                    vendedor: $("#empresa").val(),
+                    user: $('#user').val()
+                },
+                success: function (result) {
+
+                },
+                error: function () {
+                }
+            })
+        }
+    </script>
 {% endblock %}

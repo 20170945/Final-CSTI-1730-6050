@@ -132,6 +132,8 @@ def contacto(request):
 def directorio(request):
     context = presetContext(request)
     context['title'] += ' - Directorio'
+    cursor.execute("SELECT * FROM Empresa")
+    context['empresas'] = cursor.fetchall()
     return render(request, 'directorio.html', context)
 
 
@@ -188,6 +190,13 @@ def panelAdminPath(request, path, mode=None):
         context['marcas'] = cursor.fetchall()
         return render(request, 'adminVehiculo.html', context)
     elif path == 'empresa':
+        if mode == "registrar":
+            return render(request, 'registrarEmpresa.html', context)
+        elif mode == "registrarrequest":
+            cursor.execute("INSERT INTO Empresa(nombre, direccion, descripcion) VALUES ('%s','%s','%s')" % (
+                request.POST['nombre'], request.POST['direccion'], request.POST['desc']))
+            dbmssql.commit()
+            return JsonResponse({'success': True})
         cursor.execute("SELECT * FROM Empresa")
         context['empresas'] = cursor.fetchall()
         return render(request, 'adminEmpresa.html', context)
@@ -195,23 +204,51 @@ def panelAdminPath(request, path, mode=None):
         if mode == 'registrar':
             context['base'] = 'basePanel.html'
             return render(request, 'registrar.html', context)
-        if mode == 'aprobar':
+        elif mode == 'aprobar':
             cursor.execute("SELECT * FROM PersonaUsuario WHERE verificado is null;")
             context['clientes'] = cursor.fetchall()
             return render(request, 'adminAprobarUsuario.html', context)
+        elif mode == 'update':
+            print(request.POST)
+            cursor.execute("UPDATE Persona SET email='%s', direccion='%s' WHERE cedula='%s';" % (
+                request.POST['email'], request.POST['direccion'], request.POST['cedula']))
+            if request.POST['admin'] == 'true' and cursor.execute(
+                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])) == 0:
+                cursor.execute("INSERT INTO Admin(usuario) VALUE ('%s')" % (request.POST['user']))
+            elif request.POST['admin'] != 'true' and cursor.execute(
+                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])) != 0:
+                cursor.execute("DELETE FROM Admin WHERE usuario='%s';" % (request.POST['user']))
+            dbmssql.commit()
+        elif mode == 'fetch':
+            cursor.execute("SELECT * FROM Persona WHERE cedula ='%s'" % (request.POST['cedula']))
+            temp = cursor.fetchone()
+            datos = {
+                'nombre': temp[1],
+                'apellido': temp[2],
+                'direccion': temp[3],
+                'email': temp[4],
+                'usuario': temp[5],
+                'admin': (cursor.execute("SELECT * FROM Admin WHERE usuario='%s'" % (temp[5])) != 0),
+                'empresa': 'None'
+            }
+            return JsonResponse(datos)
+        cursor.execute("SELECT * FROM PersonaUsuario WHERE verificado = 1;")
+        context['cedulas'] = cursor.fetchall()
+        cursor.execute("SELECT * FROM Empresa;")
+        context['empresas'] = cursor.fetchall()
         return render(request, 'adminUsuario.html', context)
     return HttpResponseNotFound()
 
 
 allowed_tables = [
-    "Marca", "Modelo", "ModeloConTipo", "Usuario"
+    "Marca", "Modelo", "ModeloConTipo"
 ]
 
 
 def api(request, table, option):
     context = presetContext(request)
     response = {'success': False}
-    if table not in allowed_tables:
+    if table not in allowed_tables and not context['admin']:
         return HttpResponseNotFound()
     if option == 'insert':
         if context['admin']:
@@ -231,7 +268,7 @@ def api(request, table, option):
         if context['admin']:
             if table == "Marca":
                 cursor.execute("UPDATE Marca SET descripcion='%s' WHERE idMarca=%s" % (
-                request.POST['desc'], request.POST['marcaID']))
+                    request.POST['desc'], request.POST['marcaID']))
             elif table == "Usuario":
                 cursor.execute("UPDATE Usuario SET verificado=%s WHERE usuario='%s'" % (
                     request.POST['aproved'], request.POST['username']))
