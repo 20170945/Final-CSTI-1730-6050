@@ -8,9 +8,12 @@ create table Empresa
     idEmpresa   int identity
         constraint PK_Empresa primary key,
     nombre      varchar(50),
-    descripcion varchar(100)
+    descripcion varchar(256)
 )
 go
+
+INSERT INTO Empresa(nombre, descripcion)
+VALUES ('Individual', 'Persona individual');
 
 create table Usuario
 (
@@ -20,6 +23,12 @@ create table Usuario
     contrasena char(32),
 )
 go
+
+create table Admin
+(
+    usuario varchar(50) foreign key references Usuario (usuario),
+    CONSTRAINT PK_Admin primary key (usuario)
+)
 
 create table Persona
 (
@@ -34,21 +43,13 @@ create table Persona
 )
 go
 
-INSERT INTO Empresa(nombre, descripcion)
-VALUES ('Individual', 'Persona individual');
-
 create table VendedorUsuario
 (
-    idEmpresa  int foreign key references Empresa (idEmpresa),
-    idVendedor varchar(50) foreign key references Persona (cedula),
-    CONSTRAINT PK_VendedorUsuario primary key (idEmpresa, idVendedor)
+    idEmpresa      int foreign key references Empresa (idEmpresa),
+    cedulaVendedor varchar(50) foreign key references Persona (cedula),
+    CONSTRAINT PK_VendedorUsuario primary key (idEmpresa, cedulaVendedor)
 )
 
-create table Admin
-(
-    usuario varchar(50) foreign key references Persona (cedula),
-    CONSTRAINT PK_Admin primary key (usuario)
-)
 
 create table EstadoVehiculo
 (
@@ -90,7 +91,7 @@ create table Marca
         constraint Marca_pk
             primary key nonclustered,
     nombre      varchar(20),
-    descripcion varchar(50)
+    descripcion varchar(256)
 )
 go
 
@@ -103,14 +104,15 @@ create table Modelo
     idTipoVehiculo int foreign key references TipoVehiculo (idTipoVehiculo),
     nombre         varchar(20),
     ano            int,
-    descripcion    varchar(50)
+    descripcion    varchar(256)
 )
 go
 
 create table Ciudad
 (
-    idCiudad int identity constraint PK_Ciudad primary key,
-    nombre varchar(32)
+    idCiudad int identity
+        constraint PK_Ciudad primary key,
+    nombre   varchar(32)
 )
 go
 
@@ -162,10 +164,9 @@ create table Vehiculo
     idVehiculo  int identity
         constraint PK_Vehiculo primary key,
     idModelo    int foreign key references Modelo (idModelo),
-    Fecha       date,
     Precio      float,
-    Estado      bit,
-    idCiudad      int foreign key references Ciudad (idCiudad),
+    Estado      varchar(10) foreign key references EstadoVehiculo(nombre),
+    idCiudad    int foreign key references Ciudad (idCiudad),
     descripcion varchar(255)
 )
 go
@@ -182,15 +183,49 @@ create table Ventas
 )
 go
 
+create table Anuncio
+(
+    idAnuncio       int identity
+        constraint Anuncio_pk
+            primary key nonclustered,
+    idVehiculo      int foreign key references Vehiculo (idVehiculo),
+    fechaPublicacion date,
+    fechaExpiracion date,
+)
+go
+
+CREATE VIEW ModeloConTipo AS
+SELECT idModelo, idMarca, Modelo.idTipoVehiculo, TV.nombre as tipoNombre, Modelo.nombre, ano, descripcion
+FROM Modelo
+         left join TipoVehiculo TV on Modelo.idTipoVehiculo = TV.idTipoVehiculo;
+go
+
+CREATE VIEW PersonaUsuario AS
+SELECT cedula, nombre, apellido, email, Persona.usuario, U.verificado
+FROM Persona
+         INNER JOIN Usuario U on Persona.usuario = U.usuario;
+go
+
 CREATE PROCEDURE SP_NuevoUsuario @User varchar(50), @Pass char(32), @Cedula varchar(50), @Nombre varchar(50),
-                                 @Apellido varchar(50), @Direccion varchar(100), @Email varchar(50)
+                                 @Apellido varchar(50), @Direccion varchar(100), @Email varchar(50), @Verificado bit
 AS
 BEGIN
-    INSERT INTO Usuario(usuario, contrasena) VALUES (@User, @Pass);
+    INSERT INTO Usuario(usuario, contrasena, verificado) VALUES (@User, @Pass, @Verificado);
     INSERT INTO Persona(cedula, nombre, apellido, direccion, email, usuario)
     VALUES (@Cedula, @Nombre, @Apellido, @Direccion, @Email, @User);
-END
+END;
+go
 
+EXEC SP_NuevoUsuario 'admin', '81DC9BDB52D04DC20036DBD8313ED055', '1', 'Administrador', 'Sistema', '', '', 1;
+go
+
+INSERT INTO Admin(usuario)
+VALUES ('admin');
+go
+
+UPDATE Usuario
+SET verificado=null
+WHERE usuario = '2';
 
 -- CREATE LOGIN VehiculoWebApp
 --     WITH PASSWORD = N'zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]';

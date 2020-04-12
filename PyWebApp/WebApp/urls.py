@@ -14,9 +14,10 @@ urlpatterns = [
     path('directorio', views.directorio),
     path('vende', views.vende),
     path('contacto', views.contacto),
-    path('perfil/<int:id>', views.perfil),
-    path('editar/perfil', views.editarPerfil),
+    # path('perfil/<int:id>', views.perfil),
+    # path('editar/perfil', views.editarPerfil),
     path('panel/admin', views.panelAdmin),
     path('panel/admin/<str:path>', views.panelAdminPath),
+    path('panel/admin/<str:path>/<str:mode>', views.panelAdminPath),
     path('api/<str:table>/<str:option>', views.api),
 ]

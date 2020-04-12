@@ -12,7 +12,7 @@
     <script src="{% static "/js/popper.min.js" %}"></script>
     <script src="{% static "/js/bootstrap.min.js" %}"></script>
     <script src="{% static "/js/bootstrap-select.min.js" %}"></script>
-{#    <script src="{% static "/js/footer.js" %}"></script>#}
+    {#    <script src="{% static "/js/footer.js" %}"></script>#}
     {% block extrahead %}
     {% endblock %}
     <title>{{ title }}</title>
@@ -21,7 +21,7 @@
 <div id="page-container" style="padding-bottom: 0">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            {% if admin %}
+            {% if adminPanel %}
                 <a class="navbar-brand" href="/panel/admin"><h1>{{ Empresa.Nombre }}</h1></a>
             {% else %}
                 <a class="navbar-brand" href="/panel/venta"><h1>{{ Empresa.Nombre }}</h1></a>
@@ -33,18 +33,28 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    {% if admin %}
+                    {% if adminPanel %}
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="/panel/admin/vehiculo">Vehículos</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/panel/admin/empresa">Empresas</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                Empresas
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/panel/admin/empresa">Lista</a>
+                                <a class="dropdown-item" href="/panel/admin/empresa/registrar">Registrar</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/panel/admin/usuarios">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/panel/admin/registrar">Registrar</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                Usuarios
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/panel/admin/usuarios">Lista</a>
+                                <a class="dropdown-item" href="/panel/admin/usuarios/aprobar">Aprobar</a>
+                                <a class="dropdown-item" href="/panel/admin/usuarios/registrar">Registrar</a>
+                            </div>
                         </li>
                     {% endif %}
                 </ul>

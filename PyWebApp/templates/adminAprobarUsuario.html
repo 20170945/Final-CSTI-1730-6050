@@ -1,0 +1,51 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Usuarios por aprobar</h1>
+        <div class="dropdown-divider"></div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Cédula</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Email</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <th>{{ cliente.0 }}</th>
+                    <th>{{ cliente.1 }}</th>
+                    <th>{{ cliente.2 }}</th>
+                    <th>{{ cliente.3 }}</th>
+                    <th>{{ cliente.4 }}</th>
+                    <th><button onclick="update('{{ cliente.4 }}',1);">Aceptar</button><button onclick="update('{{ cliente.4 }}',0);">Rechazar</button></th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+    function update(username, value) {
+        $.ajax({
+                type: "POST",
+                url: "/api/Usuario/update",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    username: username,
+                    aproved: value
+                },
+                success: function (result) {
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error.")
+                }
+            })
+    }
+    </script>
+{% endblock %}

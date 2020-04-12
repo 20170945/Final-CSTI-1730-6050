@@ -19,15 +19,15 @@
             </div>
             <div class="col-sm-2">
                 <button type="button" class="form-control" data-toggle="modal" data-target="#addMarca">Añadir</button>
-{#                <div class="row">#}
-{#                    <a href="#" class="col-6">#}
-{#                        <button type="button" class="form-control" data-toggle="modal" data-target="#addMarca">Añadir#}
-{#                        </button>#}
-{#                    </a>#}
-{#                    <a href="#" class="col-6">#}
-{#                        <button class="form-control">Eliminar</button>#}
-{#                    </a>#}
-{#                </div>#}
+                {#                <div class="row">#}
+                {#                    <a href="#" class="col-6">#}
+                {#                        <button type="button" class="form-control" data-toggle="modal" data-target="#addMarca">Añadir#}
+                {#                        </button>#}
+                {#                    </a>#}
+                {#                    <a href="#" class="col-6">#}
+                {#                        <button class="form-control">Eliminar</button>#}
+                {#                    </a>#}
+                {#                </div>#}
             </div>
         </div>
         <div class="form-group row">
@@ -55,21 +55,7 @@
                 <th scope="col">-</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th style="max-width: 50px">1</th>
-                <th>1</th>
-            </tr>
-            <tr>
-                <th>2</th>
-                <th>2</th>
-                <th>2</th>
-                <th>2</th>
-                <th>2</th>
-            </tr>
+            <tbody class="tModelos">
             </tbody>
         </table>
 
@@ -127,13 +113,34 @@
                     </div>
                     <div class="form-group row mt-3">
                         <div class="col">
+                            <label for="anoModelo" class="col-form-label">Año:</label>
+                            <input id="anoModelo" class="form-control" type="number" value="2010">
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col">
+                            <label for="tipoModelo" class="col-form-label">Tipo:</label>
+                            <select class="form-control selectpicker" title="Todos" id="tipoModelo"
+                                    data-live-search="true">
+                                {% for tipo in tipos %}
+                                    {% if forloop.first %}
+                                        <option value="{{ tipo.0 }}" selected>{{ tipo.1 }}</option>
+                                    {% else %}
+                                        <option value="{{ tipo.0 }}">{{ tipo.1 }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col">
                             <label for="descModelo" class="col-form-label">Descripción:</label>
                             <textarea id="descModelo" class="form-control" type="text"></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="alert('NANI?');">Añadir</button>
+                    <button type="button" class="btn btn-primary" onclick="submitModelo();">Añadir</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanMarca();">
                         Cancelar
                     </button>
@@ -145,8 +152,29 @@
     <script type="text/javascript">
         var ready = true;
 
-        function loadDesc(idValue) {
+        function updateMarcaDesc() {
             $.ajax({
+                type: "POST",
+                url: "/api/Marca/getDesc",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    idMarca: idValue
+                },
+                success: function (result) {
+                    if (result['success']) {
+                        $('#descripcion').val(result['desc']);
+                    }
+                    ready = true;
+                },
+                error: function () {
+                    ready = true;
+                }
+            })
+        }
+
+        function loadDesc(idValue) {
+             return $.ajax({
                 type: "POST",
                 url: "/api/Marca/getDesc",
                 data: {
@@ -163,12 +191,8 @@
                 error: function () {
                     ready = true;
                 }
-            });
+            })
         }
-
-        $('#marca').change(function () {
-            loadDesc($(this).val())
-        });
 
         function cleanMarca() {
             $("#nameMarca").val('')
@@ -230,17 +254,37 @@
             })
         }
 
+        function clearModelo() {
+            $('#nameModelo').val('');
+            $('#descModelo').val('');
+            $('#anoModelo').val('');
+            $('#tipoModelo').val('1');
+        }
+
         function submitModelo() {
+            ready = false;
+            if ($('#nameModelo').val().length == 0) {
+                alert('El nombre no puede estar vacío.');
+                return;
+            }
+            ;
             $.ajax({
                 type: "POST",
                 url: "/api/Modelo/insert",
                 data: {
                     csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
-                    state: "inactive"
+                    state: "inactive",
+                    name: $('#nameModelo').val(),
+                    desc: $('#descModelo').val(),
+                    marcaID: $('#marca').val(),
+                    year: $('#anoModelo').val(),
+                    tipoID: $('#tipoModelo').val()
                 },
                 success: function (result) {
                     let selectVal = $("#marca").val();
                     if (result['success']) {
+                        $('#addModelo').modal('toggle');
+                        clearModelo();
                     }
                     ready = true;
                 },
@@ -253,19 +297,22 @@
         function reloadModelo(idMarca) {
             $.ajax({
                 type: "POST",
-                url: "/api/Modelo/all?idMarca="+idMarca,
+                url: "/api/ModeloConTipo/all?idMarca=" + idMarca,
                 data: {
                     csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
                     state: "inactive"
                 },
                 success: function (result) {
-                    let selectVal = $("#marca").val();
                     if (result['success']) {
-                        let marcaSelect = $("#marca");
-                        marcaSelect.empty();
-                        result['data'].forEach(e => marcaSelect.append('<option value="' + e[0] + '">' + e[1] + "</option>"));
-                        marcaSelect.selectpicker('refresh');
-                        marcaSelect.selectpicker('val', selectVal);
+                        let tableBody = $(".tModelos");
+                        tableBody.empty();
+                        result['data'].forEach(e => tableBody.append('<tr>' +
+                            '<th>'+e[5]+'</th>' +
+                            '<th>'+e[4]+'</th>' +
+                            '<th>'+e[3]+'</th>' +
+                            '<th>'+e[6]+'</th>' +
+                            '<th>'+'-'+'</th>' +
+                            '</tr>'));
                     }
                     ready = true;
                 },
@@ -275,5 +322,12 @@
             });
         }
 
+        $('#marca').change(function () {
+            $.when(loadDesc($(this).val())).done(function (a1) {
+                reloadModelo($('#marca').val());
+            })
+        });
+
+        reloadModelo($('#marca').val());
     </script>
 {% endblock %}

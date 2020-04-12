@@ -1,0 +1,25 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Empresas</h1>
+        <div class="dropdown-divider"></div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for empresa in empresas %}
+                <tr>
+                    <th>{{ empresa.0 }}</th>
+                    <th>{{ empresa.1 }}</th>
+                    <th>{{ empresa.2 }}</th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
