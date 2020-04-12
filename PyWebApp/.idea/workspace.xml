@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90fd0fab-4b12-45a9-a145-a572fa731607" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/PyWebApp.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyWebApp.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/adminVehiculo.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/adminVehiculo.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,13 +38,14 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/templates" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -246,6 +249,7 @@
       <workItem from="1586608075816" duration="3691000" />
       <workItem from="1586612000713" duration="17694000" />
       <workItem from="1586635655756" duration="2446000" />
+      <workItem from="1586640710261" duration="7947000" />
     </task>
     <servers />
   </component>
@@ -253,10 +257,15 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="414" y="175" width="1092" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586362451483">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="662" y="135" width="652" height="835" key="#PyWebApp" timestamp="1586641029965">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="662" y="135" width="652" height="835" key="#PyWebApp/67.27.1853.1053@67.27.1853.1053" timestamp="1586641029965" />
+    <state x="467" y="204" width="1092" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586640785632">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="414" y="175" width="1092" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586362451483" />
+    <state x="467" y="204" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1586640785632" />
     <state x="719" y="323" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1586350819373">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -265,37 +274,50 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1586380909637" />
-    <state width="1877" height="284" key="GridCell.Tab.0.bottom" timestamp="1586639552713">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom" timestamp="1586647090557">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="284" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586639552713" />
-    <state width="1877" height="284" key="GridCell.Tab.0.center" timestamp="1586639552713">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090557" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center" timestamp="1586647090556">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="284" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586639552713" />
-    <state width="1877" height="284" key="GridCell.Tab.0.left" timestamp="1586639552713">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left" timestamp="1586647090556">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="284" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586639552713" />
-    <state width="1877" height="284" key="GridCell.Tab.0.right" timestamp="1586639552713">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right" timestamp="1586647090556">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="284" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586639552713" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
+    <state x="482" y="187" key="SettingsEditor" timestamp="1586642399455">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="482" y="187" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1586642399455" />
     <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1586635668809">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586635668809" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1586521382168">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="668" y="255" width="672" height="687" key="search.everywhere.popup" timestamp="1586643333632">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586521382168" />
+    <state x="668" y="255" width="672" height="687" key="search.everywhere.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1586643333632" />
+    <state x="718" y="455" width="540" height="194" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1586640898942">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="718" y="455" width="540" height="194" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1586640898942" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PyWebApp$p5.coverage" NAME="p5 Coverage Results" MODIFIED="1586378789540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$views.coverage" NAME="views Coverage Results" MODIFIED="1586517813746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WebApp" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p1.coverage" NAME="p1 Coverage Results" MODIFIED="1586378231081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p10.coverage" NAME="p10 Coverage Results" MODIFIED="1586379047073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p10__1_.coverage" NAME="p10 (1) Coverage Results" MODIFIED="1586381210720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38/dada" />
     <SUITE FILE_PATH="coverage/PyWebApp$yresd.coverage" NAME="yresd Coverage Results" MODIFIED="1586377471852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$views.coverage" NAME="views Coverage Results" MODIFIED="1586517813746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WebApp" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p10.coverage" NAME="p10 Coverage Results" MODIFIED="1586379047073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p1.coverage" NAME="p1 Coverage Results" MODIFIED="1586378231081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p10__1_.coverage" NAME="p10 (1) Coverage Results" MODIFIED="1586381210720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38/dada" />
   </component>
 </project>

@@ -15,8 +15,12 @@ with open('config.json', 'r', encoding='utf-8') as f:
 
 temp = config["Base de Datos"]
 dbmssql = pyodbc.connect(
-    "DRIVER={SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp["User"] + ";PWD=" +
+    "DRIVER={ODBC Driver 17 for SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp[
+        "User"] + ";PWD=" +
     temp["Pass"])
+# dbmssql = pyodbc.connect(
+#     "DRIVER={SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp["User"] + ";PWD=" +
+#     temp["Pass"])
 cursor = dbmssql.cursor()
 
 
@@ -177,34 +181,47 @@ def panelAdminPath(request, path):
     return HttpResponseNotFound()
 
 
+allowed_tables = [
+    "Marca", "Modelo"
+]
+
+
 def api(request, table, option):
     context = presetContext(request)
     response = {'success': False}
+    if table not in allowed_tables:
+        return HttpResponseForbidden()
     if option == 'insert':
         if context['admin']:
             if table == 'Marca' and len(request.POST['nameMarca']) > 0:
                 cursor.execute("INSERT INTO Marca(nombre, descripcion) VALUES ('%s','%s');" % (
                     request.POST['nameMarca'], request.POST['descMarca']))
-                dbmssql.commit()
-                response['success'] = True
+            elif table == 'Modelo':
+                cursor.execute(
+                    "INSERT INTO Modelo(idMarca, idTipoVehiculo, nombre, ano, descripcion) VALUES (%s, %s, '%s', '%s', '%s')" % ())
+            dbmssql.commit()
+            response['success'] = True
             return JsonResponse(response)
     elif option == 'all':
+        select = "SELECT * FROM " + table
+        if 'columns' in request.POST:
+            select = "SELECT " + request.POST['columns'] + " FROM " + table
         arguments = []
         for i in request.GET.keys():
-            arguments.append('('+" OR ".join([i+'='+j for j in request.GET.getlist(i)])+')')
+            arguments.append('(' + " OR ".join(["%s='%s'" % (i, j) for j in request.GET.getlist(i)]) + ')')
         arguments = " AND ".join(arguments)
-        print(arguments)
-        if table=='Marca':
-            cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
-        else:
-            cursor.execute("SELECT * FROM %s;" % (table))
+        if len(arguments) > 0:
+            arguments = "WHERE " + arguments
+        if 'orderby' in request.POST:
+            arguments += " ORDER BY " + request.POST['orderby']
+        cursor.execute(select + " " + arguments)
         response['data'] = [[j for j in i] for i in cursor.fetchall()]
         response['success'] = True
-    elif table=='Marca' and option=='getDesc':
+    elif table == 'Marca' and option == 'getDesc':
         cursor.execute("SELECT descripcion FROM Marca WHERE idMarca=%s;" % (request.POST['id']))
         response['desc'] = cursor.fetchone()[0]
         response['success'] = True
-    elif table=='Marca' and option=='updateDesc':
+    elif table == 'Marca' and option == 'updateDesc':
         dbmssql.commit()
         response['success'] = True
     return JsonResponse(response)
