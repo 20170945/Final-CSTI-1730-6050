@@ -3,6 +3,15 @@
 
 use VentaVehiculo;
 
+-- CREATE LOGIN VehiculoWebApp
+--     WITH PASSWORD = N'zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]';
+-- go
+--
+-- CREATE USER VehiculoWebApp FOR LOGIN VehiculoWebApp;
+-- go
+--
+-- GRANT CONTROL ON DATABASE :: VentaVehiculo TO VehiculoWebApp;
+
 create table Empresa
 (
     idEmpresa   int identity
@@ -235,6 +244,7 @@ FROM Vehiculo
 WHERE idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas)
 ORDER BY Fecha;
 -- Consulta de vendedores indicado tipo (empresa o persona física) y cantidad de anuncios publicados.
+
 -- Consulta general de usuarios (clientes).
 SELECT *
 FROM Persona
@@ -263,13 +273,3 @@ CREATE FUNCTION vehiculosPorMarca(@marca int)
                 WHERE M.idMarca = @marca
             );
 go
-
-
--- CREATE LOGIN VehiculoWebApp
---     WITH PASSWORD = N'zP&hK*!4Mu5JMj#Wv^*.y+c-S6qXg.k]';
--- go
---
--- CREATE USER VehiculoWebApp FOR LOGIN VehiculoWebApp;
--- go
---
--- GRANT CONTROL ON DATABASE :: VentaVehiculo TO VehiculoWebApp;
