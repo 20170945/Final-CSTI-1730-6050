@@ -153,6 +153,7 @@ create table Vehiculo
         constraint PK_Vehiculo primary key,
     idModelo    int foreign key references Modelo (idModelo),
     Precio      float,
+    Fecha       date,
     Nuevo       bit,
     idCiudad    int foreign key references Ciudad (idCiudad),
     descripcion varchar(255)
@@ -232,6 +233,7 @@ go
 SELECT *
 FROM Vehiculo
 WHERE idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas)
+ORDER BY Fecha;
 -- Consulta de vendedores indicado tipo (empresa o persona física) y cantidad de anuncios publicados.
 -- Consulta general de usuarios (clientes).
 SELECT *
