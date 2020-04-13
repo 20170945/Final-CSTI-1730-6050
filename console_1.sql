@@ -237,7 +237,7 @@ FROM Vehiculo
          INNER JOIN Ciudad C on Vehiculo.idCiudad = C.idCiudad;
 
 CREATE VIEW Catalogo AS
-SELECT fechaPublicacion, V.idVehiculo, idMarca, idModelo, nombreMarca+' '+nombreModelo as nombre, ano, Precio, idCiudad, dbo.getTipoDeModelo(idModelo) as idTipo, descripcion
+SELECT fechaPublicacion, V.idVehiculo, idMarca, idModelo, nombreMarca+' '+nombreModelo as nombre, ano, Precio, idCiudad, dbo.getTipoDeModelo(idModelo) as idTipo, descripcion, Nuevo
 FROM VehiculoConDetalles V
          INNER JOIN (SELECT *
                      FROM Anuncio a

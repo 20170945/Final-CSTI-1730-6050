@@ -1,0 +1,13 @@
+{% load static %}
+{% for item in items %}
+    <div class="card" style="width: 18rem;">
+        <a href="/view/{{ item.1 }}">
+            <img src="{% static "/img/vehicle-silhouette-8.jpg" %}"
+                 class="card-img-top border">
+            <div class="card-body bg-light text-dark">
+                <h3>{{ item.4 }}</h3>
+                <p><b>Año:</b> {{ item.5 }}<br><b>Precio:</b> {{ item.6 }}</p>
+            </div>
+        </a>
+    </div>
+{% endfor %}

@@ -9,6 +9,31 @@ function updateYearRange() {
         yearRange.innerHTML = 'Año: ' + Math.floor(values[0]);
 }
 
+function buscar() {
+    $.ajax({
+        type: "POST",
+        url: "/catalog/fetch",
+        data: {
+            csrfmiddlewaretoken: getCSRFToken(),   // < here
+            state: "inactive",
+            estado: $('#estado').val(),
+            marca: $('#marca').val(),
+            modelo: $('#modelo').val(),
+            tipo: $('#tipo').val(),
+            ano: document.getElementById('yearslider').noUiSlider.get(),
+            priceA: $('#priceA').val(),
+            priceB: $('#priceB').val(),
+            ciudad: $('#lugar').val()
+        },
+        success: function (result) {
+            $('#items').empty();
+            $('#items').append(result)
+        },
+        error: function () {
+        }
+    })
+}
+
 $(document).ready(function () {
     let datos = window.location.search.substring(1).split('&');
     let datosDict = {}
@@ -69,4 +94,6 @@ $(document).ready(function () {
     $('#lugar').change(function () {
         console.log($('#lugar').val())
     });
+
+    buscar();
 });

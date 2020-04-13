@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime, timedelta
+from math import floor
 
 import pyodbc
 from django.http import HttpResponse
@@ -10,6 +11,8 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render
 
 # Create your views here.
+from django.template import loader
+
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
@@ -60,8 +63,36 @@ def index(request):
 
 
 # TODO catalogo
-def catalog(request):
+def catalog(request, modo=None):
     context = presetContext(request)
+    if modo == 'fetch':
+        comando = "SELECT * FROM Catalogo"
+        argumentos = []
+        print(request.POST)
+        if request.POST['estado']!='all':
+            argumentos.append("Nuevo="+request.POST['estado'])
+        if 'marca[]' in request.POST:
+            argumentos.append("idMarca IN ("+",".join(request.POST.getlist('marca[]'))+')')
+        if 'modelo[]' in request.POST:
+            argumentos.append("idModelo IN ("+",".join(request.POST.getlist('modelo[]'))+')')
+        if request.POST['tipo']!='all':
+            argumentos.append("idTipo="+request.POST['tipo'])
+        anos = sorted([floor(float(i)) for i in request.POST.getlist('ano[]')])
+        argumentos.append("ano>="+str(anos[0])+" AND ano<="+str(anos[1]))
+        precios = sorted([float(request.POST['priceA']), float(request.POST['priceB'])])
+        if precios[0]!=0 and precios[1]!=0:
+            argumentos.append("Precio>="+str(precios[0])+" AND Precio<="+str(precios[1]))
+        if len(argumentos)>0:
+            argumentos = " AND ".join(argumentos)
+            comando += " WHERE "+argumentos
+        cursor.execute(comando)
+        if 'ciudad[]' in request.POST:
+            argumentos.append("idCiudad IN ("+",".join(request.POST.getlist('ciudad[]'))+')')
+        context['items'] = cursor.fetchall()
+        template = loader.get_template('catalogItems.html')
+        return HttpResponse(template.render(context))
+    elif modo != None:
+        return HttpResponseNotFound()
     cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
     context['ciudades'] = cursor.fetchall()
     context['title'] += ' - Cátalogo'
@@ -197,9 +228,10 @@ def panelAdminPath(request, path, mode=None):
         elif mode == 'anunciorequest':
             diainicial = datetime.now()
             diafinal = datetime.now() + timedelta(days=int(request.POST['dia']))
-            cursor.execute("Insert into Anuncio(IDVehiculo, FechaPublicacion, FechaExpiracion, Estado) VALUES (%s, DATEFROMPARTS(%d,%d,%d), DATEFROMPARTS(%d,%d,%d), 'D')" % (
-                request.POST['idVehiculo'], diainicial.year, diainicial.month, diainicial.day, diafinal.year,
-                diafinal.month, diafinal.day))
+            cursor.execute(
+                "Insert into Anuncio(IDVehiculo, FechaPublicacion, FechaExpiracion, Estado) VALUES (%s, DATEFROMPARTS(%d,%d,%d), DATEFROMPARTS(%d,%d,%d), 'D')" % (
+                    request.POST['idVehiculo'], diainicial.year, diainicial.month, diainicial.day, diafinal.year,
+                    diafinal.month, diafinal.day))
             dbmssql.commit()
             return JsonResponse({'success': True})
         return HttpResponseNotFound()
