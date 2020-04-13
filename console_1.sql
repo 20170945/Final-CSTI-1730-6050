@@ -169,11 +169,20 @@ create table Vehiculo
 )
 go
 
+create table OwnerVehiculo
+(
+    idVehiculo   int foreign key references Vehiculo (idVehiculo),
+    idEmpresa    int foreign key references Empresa (idEmpresa),
+    idPublicador varchar(50) foreign key references Persona (Cedula),
+    CONSTRAINT PK_OwnerVehiculo primary key (idVehiculo)
+)
+
 create table Ventas
 (
     IdVenta    int identity
         constraint PK_Ventas
             primary key,
+    idEmpresa  int foreign key references Empresa (idEmpresa),
     idCliente  varchar(50) foreign key references Persona (Cedula),
     idVendedor varchar(50) foreign key references Persona (Cedula),
     idVehiculo int foreign key references Vehiculo (idVehiculo),
@@ -201,6 +210,8 @@ create table PedidoAnuncio
 
 )
 
+
+--Vistas
 CREATE VIEW ModeloConTipo AS
 SELECT idModelo, idMarca, Modelo.idTipoVehiculo, TV.nombre as tipoNombre, Modelo.nombre, ano, descripcion
 FROM Modelo
@@ -213,6 +224,19 @@ FROM Persona
          INNER JOIN Usuario U on Persona.usuario = U.usuario;
 go
 
+
+--Stored Procedures
+CREATE PROCEDURE SP_RegistrarVehiculo @idEmpresa int, @idPublicador varchar(50), @idModelo int, @Precio float,
+                                      @Nuevo bit, @IdCiudad int, @Descripcion varchar(255)
+as
+BEGIN
+    INSERT INTO Vehiculo(idModelo, Precio, Fecha, Nuevo, idCiudad, descripcion) VALUES (@idModelo, @Precio, GETDATE(), @Nuevo, @IdCiudad, @Descripcion);
+    DECLARE @idVehiculo int;
+    SELECT @idVehiculo=MAX(idVehiculo) FROM Vehiculo;
+    INSERT INTO OwnerVehiculo(idVehiculo, idEmpresa, idPublicador) VALUES (@idVehiculo, @idEmpresa, @idPublicador);
+END;
+go
+
 CREATE PROCEDURE SP_NuevoUsuario @User varchar(50), @Pass char(32), @Cedula varchar(50), @Nombre varchar(50),
                                  @Apellido varchar(50), @Direccion varchar(100), @Email varchar(50), @Verificado bit
 AS
@@ -220,6 +244,33 @@ BEGIN
     INSERT INTO Usuario(usuario, contrasena, verificado) VALUES (@User, @Pass, @Verificado);
     INSERT INTO Persona(cedula, nombre, apellido, direccion, email, usuario)
     VALUES (@Cedula, @Nombre, @Apellido, @Direccion, @Email, @User);
+END;
+go
+
+
+
+--Funciones
+CREATE FUNCTION getUserCedula(@usuario varchar(50))
+    RETURNS varchar(50)
+AS
+BEGIN
+    DECLARE @ans varchar(50);
+    SELECT @ans = cedula FROM Persona WHERE usuario = @usuario;
+    if (@ans IS NULL)
+        set @ans = ' ';
+    RETURN @ans;
+END;
+go
+
+CREATE FUNCTION getVendedorEmpresa(@usuario varchar(50))
+    RETURNS int
+AS
+BEGIN
+    DECLARE @ans int;
+    SELECT @ans=idEmpresa FROM VendedorUsuario WHERE cedulaVendedor=dbo.getUserCedula(@usuario);
+    if (@ans IS NULL)
+        set @ans = -1;
+    RETURN @ans;
 END;
 go
 
@@ -259,9 +310,24 @@ BEGIN
 END;
 go
 -- Función que ingrese una publicación de anuncio.
-
+Create procedure AgregarAnuncio @IDVehiculo int,
+                                @FechaPublicacion datetime,
+                                @FechaExpiracion datetime,
+                                @Estado char
+As
+Begin
+    Insert into Anuncio(IDVehiculo, FechaPublicacion, FechaExpiracion, Estado)
+    Values (@IDVehiculo, @FechaPublicacion, @FechaExpiracion, @Estado)
+End;
+go
 -- Función que elimine una publicación de anuncio.
+Create procedure EliminarAnuncio @idAnuncio int
+As
 
+Begin
+    Delete from Anuncio where idAnuncio = @idAnuncio
+End
+go
 -- Función que muestre los vehículos por marca (se debe enviar la marca como parámetro).
 CREATE FUNCTION vehiculosPorMarca(@marca int)
     RETURNS TABLE

@@ -32,7 +32,8 @@ def presetContext(request):
         "title": config['Empresa']["Nombre"],
         'tipos': tipos,
         'logged': False,
-        'admin': False
+        'admin': False,
+        'vendedor': False
     }
     if "LoginID" in request.COOKIES:
         cursor.execute("SELECT usuario FROM Usuario WHERE usuario='%s'" % (request.COOKIES['LoginID']))
@@ -41,6 +42,11 @@ def presetContext(request):
         if preset['logged']:
             preset['admin'] = (
                     cursor.execute("SELECT usuario FROM Admin WHERE usuario='%s'" % (datos[0])).rowcount != 0)
+            preset['vendedor'] = (
+                    cursor.execute(
+                        "SELECT * FROM VendedorUsuario WHERE cedulaVendedor=dbo.getUserCedula('%s');" % (
+                            datos[0])).rowcount != 0)
+    print(preset)
     return preset
 
 
@@ -209,15 +215,27 @@ def panelAdminPath(request, path, mode=None):
             context['clientes'] = cursor.fetchall()
             return render(request, 'adminAprobarUsuario.html', context)
         elif mode == 'update':
-            print(request.POST)
             cursor.execute("UPDATE Persona SET email='%s', direccion='%s' WHERE cedula='%s';" % (
                 request.POST['email'], request.POST['direccion'], request.POST['cedula']))
             if request.POST['admin'] == 'true' and cursor.execute(
-                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])) == 0:
-                cursor.execute("INSERT INTO Admin(usuario) VALUE ('%s')" % (request.POST['user']))
+                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])).rowcount == 0:
+                cursor.execute("INSERT INTO Admin(usuario) VALUES ('%s')" % (request.POST['user']))
             elif request.POST['admin'] != 'true' and cursor.execute(
-                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])) != 0:
+                    "SELECT * FROM Admin WHERE usuario='%s';" % (request.POST['user'])).rowcount != 0:
                 cursor.execute("DELETE FROM Admin WHERE usuario='%s';" % (request.POST['user']))
+
+            cursor.execute("SELECT * FROM VendedorUsuario WHERE cedulaVendedor='%s'" % (
+                request.POST['cedula']))
+            temp = cursor.fetchone()
+            if temp is not None:
+                if request.POST['empresa'] == 'None':
+                    cursor.execute("DELETE FROM VendedorUsuario WHERE cedulaVendedor='%s';" % (request.POST['cedula']))
+                else:
+                    cursor.execute("UPDATE VendedorUsuario SET idEmpresa=%s WHERE cedulaVendedor='%s';" % (
+                        request.POST['empresa'], request.POST['cedula']))
+            elif request.POST['empresa'] != 'None':
+                cursor.execute("INSERT INTO VendedorUsuario(idEmpresa, cedulaVendedor) VALUES (%s, '%s')" % (
+                    request.POST['empresa'], request.POST['cedula']))
             dbmssql.commit()
         elif mode == 'fetch':
             cursor.execute("SELECT * FROM Persona WHERE cedula ='%s'" % (request.POST['cedula']))
@@ -228,9 +246,12 @@ def panelAdminPath(request, path, mode=None):
                 'direccion': temp[3],
                 'email': temp[4],
                 'usuario': temp[5],
-                'admin': (cursor.execute("SELECT * FROM Admin WHERE usuario='%s'" % (temp[5])) != 0),
+                'admin': (cursor.execute("SELECT * FROM Admin WHERE usuario='%s'" % (temp[5])).rowcount != 0),
                 'empresa': 'None'
             }
+            if cursor.execute("SELECT idEmpresa FROM VendedorUsuario WHERE cedulaVendedor='%s'" % (
+                    request.POST['cedula'])).rowcount != 0:
+                datos['empresa'] = cursor.fetchone()[0]
             return JsonResponse(datos)
         cursor.execute("SELECT * FROM PersonaUsuario WHERE verificado = 1;")
         context['cedulas'] = cursor.fetchall()
@@ -238,6 +259,19 @@ def panelAdminPath(request, path, mode=None):
         context['empresas'] = cursor.fetchall()
         return render(request, 'adminUsuario.html', context)
     return HttpResponseNotFound()
+
+
+def panelVenta(request, path=None, mode=None):
+    context = presetContext(request)
+    if not context['vendedor']:
+        return HttpResponseForbidden
+    cursor.execute("SELECT * FROM Persona WHERE usuario='" + request.COOKIES['LoginID'] + "'")
+    temp = cursor.fetchone()
+    context['nombre'] = temp[1]
+    context['apellido'] = temp[2]
+    context['adminPanel'] = False
+    context['title'] = 'Panel de Ventas'
+    return render(request, 'venta.html', context)
 
 
 allowed_tables = [

@@ -98,7 +98,6 @@
                     cedula: $(this).val()
                 },
                 success: function (result) {
-                    console.log(result);
                     $("#name").val(result['nombre']);
                     $("#lastname").val(result['apellido']);
                     $("#user").val(result['usuario']);
@@ -126,7 +125,8 @@
                     direccion: $("#direccion").val(),
                     admin: $("#admin").is(":checked"),
                     vendedor: $("#empresa").val(),
-                    user: $('#user').val()
+                    user: $('#user').val(),
+                    empresa: $('#empresa').val()
                 },
                 success: function (result) {
 

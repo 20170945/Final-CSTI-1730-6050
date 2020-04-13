@@ -19,5 +19,8 @@ urlpatterns = [
     path('panel/admin', views.panelAdmin),
     path('panel/admin/<str:path>', views.panelAdminPath),
     path('panel/admin/<str:path>/<str:mode>', views.panelAdminPath),
+    path('panel/venta', views.panelVenta),
+    path('panel/venta/<str:path>', views.panelVenta),
+    path('panel/venta/<str:path>/<str:mode>', views.panelVenta),
     path('api/<str:table>/<str:option>', views.api),
 ]
