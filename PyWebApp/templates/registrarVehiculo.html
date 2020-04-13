@@ -23,15 +23,8 @@
                 <div class="form-group row">
                     <label for="modelo" class="col-sm-2 col-form-label">Modelo:</label>
                     <div class="col-sm-10">
-                        <select name="modelo" class="form-control selectpicker" title="Ninguno" id="marca"
+                        <select name="modelo" class="form-control selectpicker" title="Ninguno" id="modelo"
                                 data-live-search="true">
-                            {% for marca in marcas %}
-                                {% if forloop.first %}
-                                    <option selected value="{{ marca.0 }}">{{ marca.1 }}</option>
-                                {% else %}
-                                    <option value="{{ marca.0 }}">{{ marca.1 }}</option>
-                                {% endif %}
-                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -78,16 +71,45 @@
         </div>
     </div>
     <script type="text/javascript">
-        var ready = true;
+        function loadModelos() {
+            var resultado = $.ajax({
+                type: "POST",
+                url: "/api/Modelo/all?idMarca=" + $('#marca').val().toString(),
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive"
+                },
+                success: function (result) {
+                    if (result['success']) {
+                        var target = $('#modelo')
+                        target.empty();
+                        var value = null;
+                        var i;
+                        var j = result['data'].length;
+                        for (i = 0; i < j; i++) {
+                            if (i == 0)
+                                value = result['data'][i][0];
+                            target.append('<option val="' + result['data'][i][0] + '">' + result['data'][i][3] + '</option>');
+                        }
+                        if(value!=null) {
+                            target.val(value);
+                        }
+                        target.selectpicker('refresh');
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
 
-        $('.form-control').change(function () {
-            $(this).removeClass('is-invalid')
+        $('#marca').change(function () {
+            loadModelos();
         });
 
         function registrar() {
             $.ajax({
                 type: "POST",
-                url: "/panel/admin/empresa/registrarrequest",
+                url: "/panel/venta/vehiculo/registrarrequest",
                 data: {
                     csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
                     state: "inactive",
@@ -99,5 +121,7 @@
                 }
             })
         }
+
+        loadModelos();
     </script>
 {% endblock %}

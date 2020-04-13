@@ -269,6 +269,9 @@ def panelVenta(request, path=None, mode=None):
             cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
             context['ciudades'] = cursor.fetchall()
             return render(request, 'registrarVehiculo.html', context)
+        elif mode == 'registrarrequest':
+            print(request.POST)
+            return JsonResponse({'success': True})
     cursor.execute("SELECT * FROM Persona WHERE usuario='" + request.COOKIES['LoginID'] + "'")
     temp = cursor.fetchone()
     context['nombre'] = temp[1]

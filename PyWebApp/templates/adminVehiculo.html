@@ -276,7 +276,7 @@
                     desc: $('#descModelo').val(),
                     marcaID: $('#marca').val(),
                     year: $('#anoModelo').val(),
-                    tipoID: $('#tipoModelo').val()
+                    tipoID: $('#tipoModelo').val()$(this).removeClass('is-invalid')
                 },
                 success: function (result) {
                     let selectVal = $("#marca").val();
