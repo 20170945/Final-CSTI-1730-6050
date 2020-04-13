@@ -88,15 +88,34 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <button type="button" class="form-control btn-primary" onclick="buscar();">Buscar</button>
+                    </div>
+                </div>
             </nav>
             <div class="col-lg-9 col-md-12">
-                Mostrando
-                <div id="mostrar" class="d-inline font-weight-bold">MSG</div>
-                de
-                <div id="cantResult" class="d-inline font-weight-bold">MSG</div>
-                resultados.
+                <h5>Catálogo</h5>
+                {#                Mostrando#}
+                {#                <div id="mostrar" class="d-inline font-weight-bold">MSG</div>#}
+                {#                de#}
+                {#                <div id="cantResult" class="d-inline font-weight-bold">MSG</div>#}
+                {#                resultados.#}
                 <div class="dropdown-divider"></div>
-                <div></div>
+                <div class="items card-columns">
+                    {% for item in items %}
+                        <div class="card" style="width: 18rem;">
+                            <a href="/view/{{ item.1 }}">
+                                <img src="{% static "/img/vehicle-silhouette-8.jpg" %}"
+                                     class="card-img-top border">
+                                <div class="card-body bg-light text-dark">
+                                    <h3>{{ item.4 }}</h3>
+                                    <p><b>Año:</b> {{ item.5 }}<br><b>Precio:</b> {{ item.6 }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

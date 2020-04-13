@@ -21,8 +21,8 @@ END;
 go
 -- Función que ingrese una publicación de anuncio.
 Create procedure AgregarAnuncio @IDVehiculo int,
-                                @FechaPublicacion datetime,
-                                @FechaExpiracion datetime,
+                                @FechaPublicacion date,
+                                @FechaExpiracion date,
                                 @Estado char
 As
 Begin

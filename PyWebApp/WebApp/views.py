@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pyodbc
 from django.http import HttpResponse
@@ -67,6 +67,8 @@ def catalog(request):
     context['title'] += ' - Cátalogo'
     cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
     context['marcas'] = cursor.fetchall()
+    cursor.execute("SELECT * FROM Catalogo ORDER BY fechaPublicacion;")
+    context['items'] = cursor.fetchall()
     return render(request, 'catalog.html', context)
 
 
@@ -103,18 +105,6 @@ def loginRequest(request):
     else:
         data = JsonResponse(data)
     return data
-
-
-# TODO view
-def view(request, id):
-    context = presetContext(request)
-    context["carro"] = {
-        "marca": 'Toyota',
-        "modelo": 'Nose',
-        "year": 2010,
-        "precio": 10000
-    }
-    return render(request, 'view.html', context)
 
 
 # scrapped
@@ -199,6 +189,19 @@ def panelAdminPath(request, path, mode=None):
             cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
             context['marcas'] = cursor.fetchall()
             return render(request, 'adminVehiculo.html', context)
+        elif mode == 'anuncio':
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles WHERE idVehiculo NOT IN (SELECT idVehiculo FROM Anuncio WHERE GETDATE()<=fechaExpiracion) AND idVehiculo NOT IN (SELECT idVehiculo FROM Ventas);")
+            context['vehiculos'] = cursor.fetchall()
+            return render(request, 'adminAnuncio.html', context)
+        elif mode == 'anunciorequest':
+            diainicial = datetime.now()
+            diafinal = datetime.now() + timedelta(days=int(request.POST['dia']))
+            cursor.execute("Insert into Anuncio(IDVehiculo, FechaPublicacion, FechaExpiracion, Estado) VALUES (%s, DATEFROMPARTS(%d,%d,%d), DATEFROMPARTS(%d,%d,%d), 'D')" % (
+                request.POST['idVehiculo'], diainicial.year, diainicial.month, diainicial.day, diafinal.year,
+                diafinal.month, diafinal.day))
+            dbmssql.commit()
+            return JsonResponse({'success': True})
         return HttpResponseNotFound()
     elif path == 'empresa':
         if mode == "registrar":
@@ -301,8 +304,13 @@ def panelVenta(request, path=None, mode=None):
                     request.POST['idVehiculo']))
             response = {'success': True, 'data': [i for i in cursor.fetchone()]}
             cursor.execute(
-                "SELECT * FROM Vehiculo WHERE idVehiculo IN (SELECT Ventas.idVehiculo FROM Ventas GROUP BY idVehiculo);")
-            response['vendido'] = len(cursor.fetchall()) > 0
+                "SELECT * FROM Vehiculo WHERE idVehiculo IN (SELECT Ventas.idVehiculo FROM Ventas GROUP BY idVehiculo) AND idVehiculo=%s;" % (
+                    request.POST['idVehiculo']))
+            meh = cursor.fetchall()
+            cursor.execute("SELECT nombre FROM TipoVehiculo WHERE idTipoVehiculo=dbo.getTipoDeModelo('%s')" % (
+                response['data'][3]))
+            response['tipo'] = cursor.fetchone()[0]
+            response['vendido'] = "No" if len(meh) != 0 else "Si"
             return JsonResponse(response)
         elif mode == 'update':
             cursor.execute(
@@ -324,10 +332,12 @@ def panelVenta(request, path=None, mode=None):
         return render(request, 'ventaVehiculo.html', context)
     if path == 'registrar':
         if mode == 'request':
-            print(request.POST)
-            return JsonResponse({'success':True})
+            cursor.execute("exec SP_RegistrarVenta %s, '%s','%s', %s;" % (
+                context['empresa'], cedula, request.POST['cliente'], request.POST['idVehiculo']))
+            dbmssql.commit()
+            return JsonResponse({'success': True})
         elif mode is not None:
-            return HttpResponseNotFound
+            return HttpResponseNotFound()
         cursor.execute("SELECT * FROM PersonaUsuario WHERE verificado = 1;")
         context['cedulas'] = cursor.fetchall()
         if context['individual']:
@@ -342,13 +352,88 @@ def panelVenta(request, path=None, mode=None):
         return render(request, 'ventaRealizar.html', context)
     if path == 'ver':
         if context['individual']:
-            return HttpResponseNotFound
+            return HttpResponseNotFound()
+        if mode == 'fetch':
+            data = {'success': True}
+            comando = "SELECT *, dbo.getNameTipoDeModelo(idModelo) FROM Ventas INNER JOIN VehiculoConDetalles VCD on VCD.idVehiculo=Ventas.idVehiculo WHERE idEmpresa=%s" % (
+                context['empresa'])
+            if request.POST['estado'] != 'all':
+                comando += " AND Nuevo=" + str(request.POST['estado'])
+            if 'marca[]' in request.POST:
+                temp = '(' + ",".join(request.POST.getlist('marca[]')) + ')'
+                comando += " AND idMarca IN " + temp
+            if 'modelo[]' in request.POST:
+                temp = '(' + ",".join(request.POST.getlist('modelo[]')) + ')'
+                comando += " AND idModelo IN " + temp
+            if request.POST['tipo'] != 'all':
+                comando += ' AND dbo.getTipoDeModelo(idModelo)=' + request.POST['tipo']
+            if 'ciudad[]' in request.POST:
+                temp = '(' + ",".join(request.POST.getlist('ciudad[]')) + ')'
+                comando += " AND idCiudad IN " + temp
+            if request.POST['dia'] != 'Todos':
+                comando += " AND DAY(Ventas.Fecha)=" + str(request.POST['dia'])
+            if int(request.POST['mes']) > 0:
+                comando += " AND MONTH(Ventas.Fecha)=" + str(request.POST['mes'])
+            if request.POST['ano'] != 'Todos':
+                comando += " AND YEAR(Ventas.Fecha)=" + str(request.POST['ano'])
+            cursor.execute(comando)
+            data['data'] = [[j for j in i] for i in cursor.fetchall()]
+            return JsonResponse(data)
+        cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
+        context['ciudades'] = cursor.fetchall()
+        context['title'] += ' - Cátalogo'
+        cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+        context['marcas'] = cursor.fetchall()
+        context['dias'] = range(1, 32)
+        context['years'] = range(1970, datetime.now().year + 2)
+        cursor.execute(
+            "SELECT *, dbo.getNameTipoDeModelo(idModelo) FROM Ventas INNER JOIN VehiculoConDetalles VCD on VCD.idVehiculo=Ventas.idVehiculo WHERE idEmpresa=%s;" % (
+                context['empresa']))
+        context['ventas'] = cursor.fetchall()
+        return render(request, 'ventaVentas.html', context)
     cursor.execute("SELECT * FROM Persona WHERE usuario='" + request.COOKIES['LoginID'] + "'")
     temp = cursor.fetchone()
     context['nombre'] = temp[1]
     context['apellido'] = temp[2]
     context['adminPanel'] = False
     return render(request, 'venta.html', context)
+
+
+def view(request, id):
+    context = presetContext(request)
+    cursor.execute(
+        "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE VehiculoConDetalles.idVehiculo =%s" % (
+            id))
+    carro = cursor.fetchone()
+    if carro[12] != True:
+        return HttpResponseNotFound()
+    context["carro"] = {
+        "marca": carro[2],
+        "modelo": carro[4],
+        "year": carro[5],
+        "precio": carro[6],
+        "descripcion": carro[11]
+    }
+    cursor.execute("SELECT * FROM Empresa WHERE idEmpresa=%s" % (carro[14]))
+    empresa = cursor.fetchone()
+    context["empre"] = {
+        "nombre": empresa[1],
+        "direccion": empresa[2],
+        "descripcion": empresa[3]
+    }
+    context["individual"] = (carro[14] == 1)
+    cursor.execute("SELECT * FROM Persona WHERE cedula='%s'" % (carro[15]))
+    persona = cursor.fetchone()
+    context['persona'] = {
+        "nombre": persona[1],
+        "apellido": persona[2],
+        "email": persona[4]
+    }
+    cursor.execute(
+        "SELECT nombre FROM TipoVehiculo WHERE idTipoVehiculo=dbo.getTipoDeModelo('%s')" % (carro[3]))
+    context['tipo'] = cursor.fetchone()[0]
+    context['title'] += ' - ' + carro[2] + " " + carro[4] + " (" + str(carro[5]) + ")"
+    return render(request, 'view.html', context)
 
 
 allowed_tables = [
@@ -407,7 +492,8 @@ def api(request, table, option):
         cursor.execute("SELECT descripcion FROM Marca WHERE idMarca=%s;" % (request.POST['id']))
         response['desc'] = cursor.fetchone()[0]
         response['success'] = True
-    elif table == 'Marca' and option == 'updateDesc':
-        dbmssql.commit()
+    elif table == 'Modelo' and option == 'fromMarcas':
+        cursor.execute("SELECT * FROM Modelo WHERE idMarca IN (%s)" % ((",".join(request.POST.getlist('marcas[]')))))
+        response['data'] = [[j for j in i] for i in cursor.fetchall()]
         response['success'] = True
     return JsonResponse(response)

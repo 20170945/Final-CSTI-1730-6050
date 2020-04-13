@@ -228,14 +228,33 @@ SELECT idVehiculo,
        Fecha,
        Nuevo,
        Vehiculo.idCiudad,
-       C.nombre as Ciudad,
+       C.nombre  as Ciudad,
        Vehiculo.descripcion,
        aprobado
 FROM Vehiculo
          INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
-         INNER JOIN Marca M2 on M.idMarca = M2.idMarca INNER JOIN Ciudad C on Vehiculo.idCiudad = C.idCiudad;
+         INNER JOIN Marca M2 on M.idMarca = M2.idMarca
+         INNER JOIN Ciudad C on Vehiculo.idCiudad = C.idCiudad;
+
+CREATE VIEW Catalogo AS
+SELECT fechaPublicacion, V.idVehiculo, idMarca, idModelo, nombreMarca+' '+nombreModelo as nombre, ano, Precio, idCiudad, dbo.getTipoDeModelo(idModelo) as idTipo, descripcion
+FROM VehiculoConDetalles V
+         INNER JOIN (SELECT *
+                     FROM Anuncio a
+                     WHERE fechaExpiracion > GETDATE()
+                       AND a.idVehiculo NOT IN (SELECT d.idVehiculo FROM Ventas d)) as A
+                    ON A.idVehiculo = V.idVehiculo;
+go
 
 --Stored Procedures
+CREATE PROCEDURE SP_RegistrarVenta @idEmpresa int, @idVendedor varchar(50), @idCliente varchar(50), @idVehiculo int
+as
+BEGIN
+    INSERT INTO Ventas(idEmpresa, idCliente, idVendedor, idVehiculo, Fecha)
+    VALUES (@idEmpresa, @idCliente, @idVendedor, @idVehiculo, GETDATE());
+END;
+go
+
 CREATE PROCEDURE SP_RegistrarVehiculo @idEmpresa int, @idPublicador varchar(50), @idModelo int, @Precio float,
                                       @Nuevo bit, @IdCiudad int, @Descripcion varchar(255)
 as
@@ -270,6 +289,30 @@ BEGIN
         set @ans = ' ';
     RETURN @ans;
 END;
+go
+
+CREATE FUNCTION getTipoDeModelo(@idModelo int)
+    returns int
+as
+begin
+    DECLARE @ans int;
+    SELECT @ans = idTipoVehiculo FROM Modelo WHERE idModelo = @idModelo;
+    if (@ans IS NULL)
+        set @ans = -1;
+    return @ans;
+end;
+go
+
+CREATE FUNCTION getNameTipoDeModelo(@idModelo int)
+    returns varchar(20)
+as
+begin
+    DECLARE @ans varchar(20);
+    SELECT @ans = nombre FROM TipoVehiculo WHERE idTipoVehiculo = dbo.getTipoDeModelo(@idModelo);
+    if (@ans IS NULL)
+        set @ans = 'null';
+    return @ans;
+end;
 go
 
 CREATE FUNCTION getVendedorEmpresa(@usuario varchar(50))
@@ -346,6 +389,3 @@ DELETE
 FROM Usuario
 WHERE verificado = 0;
 go
-
-
-

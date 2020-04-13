@@ -32,6 +32,12 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="tipo" class="col-sm-1 col-form-label">Tipo:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="tipo" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="modelo" class="col-sm-1 col-form-label">Modelo:</label>
             <div class="col-sm-11">
                 <input type="text" readonly id="modelo" class="form-control">
@@ -66,7 +72,7 @@
         <div class="form-group row">
             <label for="precio" class="col-sm-1 col-form-label">Precio:</label>
             <div class="col-sm-11">
-                <input type="number"  id="precio" class="form-control">
+                <input type="number" id="precio" class="form-control">
             </div>
         </div>
         <div class="form-group row">
@@ -95,7 +101,7 @@
                     desc: $('#desc').val()
                 },
                 success: function (result) {
-                    if(!result['success'])
+                    if (!result['success'])
                         alert('No se pudo guardar los cambios:\nPosiblemente debido a que no se encuentra disponible.')
                 },
                 error: function () {
@@ -104,6 +110,7 @@
         };
 
         $('#vehiculo').change(function () {
+            console.log($('#vehiculo').val())
             $.ajax({
                 type: "POST",
                 url: "/panel/venta/vehiculo/fetch",
@@ -113,7 +120,7 @@
                     idVehiculo: $('#vehiculo').val()
                 },
                 success: function (result) {
-                    console.log(result['data']);
+                    console.log(result);
                     $('#vendedor').val(result['data'][15]);
                     $('#marca').val(result['data'][2]);
                     $('#modelo').val(result['data'][4]);
@@ -121,8 +128,9 @@
                     $('#estado').val(result['data'][8] ? 'Nuevo' : 'Usado');
                     $('#ciudad').val(result['data'][10]);
                     $('#desc').val(result['data'][11]);
-                    $('#disponible').val(result['vendido'] ? 'No' : 'Si');
-                    $('#precio').val(result['data'][6])
+                    $('#disponible').val(result['vendido']);
+                    $('#precio').val(result['data'][6]);
+                    $('#tipo').val(result['tipo']);
                 },
                 error: function () {
                 }

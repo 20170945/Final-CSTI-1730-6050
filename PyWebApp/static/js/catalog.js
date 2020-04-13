@@ -53,7 +53,6 @@ $(document).ready(function () {
         $('#tipo').selectpicker('val', datosDict['tipo'][0]);
         $('#tipo').selectpicker('refresh');
     }
-    console.log('??')
     slider = document.getElementById('yearslider');
     yearRange = document.getElementById('showyearrange');
     noUiSlider.create(slider, {

@@ -1,13 +1,38 @@
 var modelo = null;
 var marcaSelect = null;
 
-function loadModeloData() {
-    if (marcaSelect.val().length == 2) {
-        modelo.append('<option>a</option>');
-    } else if (marcaSelect.val().length == 1) {
-        modelo.append('<option>b</option>');
-        modelo.append('<option>c</option>');
+function getCSRFToken() {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, 10) == ('csrftoken' + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
     }
+    return cookieValue;
+}
+
+function loadModeloData() {
+    $.ajax({
+        type: "POST",
+        url: "/api/Modelo/fromMarcas",
+        data: {
+            csrfmiddlewaretoken: getCSRFToken(),   // < here
+            state: "inactive",
+            marcas: $('#marca').val(),
+        },
+        success: function (result) {
+            result['data'].forEach(e => $("#modelo").append('<option value="' + e[0] + '">' + e[3] + ' (' + e[4] + ')</option>'));
+            $("#modelo").prop('disabled', false);
+            $("#modelo").selectpicker('refresh');
+        },
+        error: function () {
+        }
+    })
 }
 
 $(document).ready(function () {
@@ -20,11 +45,10 @@ $(document).ready(function () {
         modelo.empty();
         if (marcaSelect.val().length == 0) {
             modelo.prop('disabled', true);
+            modelo.selectpicker('refresh');
         } else {
             loadModeloData();
-            modelo.prop('disabled', false);
         }
-        modelo.selectpicker('refresh');
         // console.log($('#marca.selectpicker').val());
     });
 });
