@@ -14,13 +14,13 @@ with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 temp = config["Base de Datos"]
-# dbmssql = pyodbc.connect(
-#     "DRIVER={ODBC Driver 17 for SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp[
-#         "User"] + ";PWD=" +
-#     temp["Pass"])
 dbmssql = pyodbc.connect(
-    "DRIVER={SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp["User"] + ";PWD=" +
+    "DRIVER={ODBC Driver 17 for SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp[
+        "User"] + ";PWD=" +
     temp["Pass"])
+# dbmssql = pyodbc.connect(
+#     "DRIVER={SQL Server};SERVER=" + temp["IP"] + ";DATABASE=" + temp["Database"] + ";UID=" + temp["User"] + ";PWD=" +
+#     temp["Pass"])
 cursor = dbmssql.cursor()
 cursor.execute("SELECT * FROM TipoVehiculo;")
 tipos = [i for i in cursor.fetchall()]
@@ -46,7 +46,6 @@ def presetContext(request):
                     cursor.execute(
                         "SELECT * FROM VendedorUsuario WHERE cedulaVendedor=dbo.getUserCedula('%s');" % (
                             datos[0])).rowcount != 0)
-    print(preset)
     return preset
 
 
@@ -134,7 +133,6 @@ def contacto(request):
     return render(request, 'contacto.html', context)
 
 
-# TODO directorio
 def directorio(request):
     context = presetContext(request)
     context['title'] += ' - Directorio'
@@ -143,7 +141,6 @@ def directorio(request):
     return render(request, 'directorio.html', context)
 
 
-# TODO vende
 def vende(request):
     context = presetContext(request)
     context['title'] += ' - Vende'
@@ -265,6 +262,13 @@ def panelVenta(request, path=None, mode=None):
     context = presetContext(request)
     if not context['vendedor']:
         return HttpResponseForbidden
+    if path == 'vehiculo':
+        if mode == 'registrar':
+            cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+            context['marcas'] = cursor.fetchall()
+            cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
+            context['ciudades'] = cursor.fetchall()
+            return render(request, 'registrarVehiculo.html', context)
     cursor.execute("SELECT * FROM Persona WHERE usuario='" + request.COOKIES['LoginID'] + "'")
     temp = cursor.fetchone()
     context['nombre'] = temp[1]
@@ -290,7 +294,6 @@ def api(request, table, option):
                 cursor.execute("INSERT INTO Marca(nombre, descripcion) VALUES ('%s','%s');" % (
                     request.POST['nameMarca'], request.POST['descMarca']))
             elif table == 'Modelo':
-                print(request.POST)
                 cursor.execute(
                     "INSERT INTO Modelo(idMarca, idTipoVehiculo, nombre, ano, descripcion) VALUES (%s, %s, '%s', %s, '%s')" % (
                         request.POST['marcaID'], request.POST['tipoID'], request.POST['name'], request.POST['year'],

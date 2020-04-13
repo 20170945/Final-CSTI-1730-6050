@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90fd0fab-4b12-45a9-a145-a572fa731607" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/registrarVehiculo.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/vendedor.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/venta.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebApp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/adminUsuario.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/adminUsuario.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/adminVehiculo.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/adminVehiculo.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/basePanel.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/basePanel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../console_1.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../console_1.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/registrarVehiculo.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/registrarVehiculo.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -212,8 +208,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JavaScript Debug.adminVehiculo.html" />
         <item itemvalue="Python.views" />
+        <item itemvalue="JavaScript Debug.adminVehiculo.html" />
         <item itemvalue="Python.p10 (1)" />
         <item itemvalue="Python.p10" />
         <item itemvalue="Python.p5" />
@@ -240,6 +236,7 @@
       <workItem from="1586640710261" duration="7947000" />
       <workItem from="1586689586231" duration="38014000" />
       <workItem from="1586736123683" duration="10379000" />
+      <workItem from="1586756234234" duration="2573000" />
     </task>
     <servers />
   </component>
@@ -264,26 +261,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1586380909637" />
-    <state width="1877" height="258" key="GridCell.Tab.0.bottom" timestamp="1586756111096">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom" timestamp="1586758505826">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="258" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586756111096" />
-    <state width="1807" height="278" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090557" />
-    <state width="1877" height="258" key="GridCell.Tab.0.center" timestamp="1586756111096">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586758505826" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center" timestamp="1586758505826">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="258" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586756111096" />
-    <state width="1807" height="278" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
-    <state width="1877" height="258" key="GridCell.Tab.0.left" timestamp="1586756111096">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586758505826" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left" timestamp="1586758505825">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="258" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586756111096" />
-    <state width="1807" height="278" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
-    <state width="1877" height="258" key="GridCell.Tab.0.right" timestamp="1586756111096">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586758505825" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right" timestamp="1586758505826">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state width="1877" height="258" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586756111096" />
-    <state width="1807" height="278" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586647090556" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586758505826" />
     <state x="482" y="187" key="SettingsEditor" timestamp="1586642399455">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -304,10 +301,10 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PyWebApp$p5.coverage" NAME="p5 Coverage Results" MODIFIED="1586378789540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$views.coverage" NAME="views Coverage Results" MODIFIED="1586517813746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WebApp" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p1.coverage" NAME="p1 Coverage Results" MODIFIED="1586378231081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p10.coverage" NAME="p10 Coverage Results" MODIFIED="1586379047073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
-    <SUITE FILE_PATH="coverage/PyWebApp$p10__1_.coverage" NAME="p10 (1) Coverage Results" MODIFIED="1586381210720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38/dada" />
     <SUITE FILE_PATH="coverage/PyWebApp$yresd.coverage" NAME="yresd Coverage Results" MODIFIED="1586377471852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p10.coverage" NAME="p10 Coverage Results" MODIFIED="1586379047073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$views.coverage" NAME="views Coverage Results" MODIFIED="1586756409349" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WebApp" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p1.coverage" NAME="p1 Coverage Results" MODIFIED="1586378231081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38" />
+    <SUITE FILE_PATH="coverage/PyWebApp$p10__1_.coverage" NAME="p10 (1) Coverage Results" MODIFIED="1586381210720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Python38/dada" />
   </component>
 </project>
