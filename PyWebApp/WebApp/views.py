@@ -189,9 +189,17 @@ def panelAdminPath(request, path, mode=None):
     if not context['admin']:
         return HttpResponseForbidden()
     elif path == 'vehiculo':
-        cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
-        context['marcas'] = cursor.fetchall()
-        return render(request, 'adminVehiculo.html', context)
+        if mode == 'aprobar':
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE aprobado is null;")
+            context['vehiculos'] = cursor.fetchall()
+            [print(i) for i in context['vehiculos']]
+            return render(request, 'adminAprobarVehiculo.html', context)
+        elif mode == 'marcaYmodelo':
+            cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+            context['marcas'] = cursor.fetchall()
+            return render(request, 'adminVehiculo.html', context)
+        return HttpResponseNotFound()
     elif path == 'empresa':
         if mode == "registrar":
             return render(request, 'registrarEmpresa.html', context)
@@ -262,22 +270,84 @@ def panelVenta(request, path=None, mode=None):
     context = presetContext(request)
     if not context['vendedor']:
         return HttpResponseForbidden
+    context['title'] = 'Panel de Ventas'
+    cursor.execute("SELECT idEmpresa FROM VendedorUsuario WHERE cedulaVendedor=dbo.getUserCedula('%s')" % (
+        request.COOKIES['LoginID']))
+    context['empresa'] = cursor.fetchone()[0]
+    cursor.execute("SELECT nombre FROM Empresa WHERE idEmpresa=%s" % (context['empresa']))
+    context['nombreEmpresa'] = cursor.fetchone()[0]
+    cursor.execute("SELECT dbo.getUserCedula('%s')" % (request.COOKIES['LoginID']))
+    cedula = cursor.fetchone()[0]
+    context['individual'] = (context['empresa'] == 1)
+    if not context['individual']:
+        context['title'] += ' - ' + context['nombreEmpresa']
     if path == 'vehiculo':
         if mode == 'registrar':
-            cursor.execute("SELECT * FROM Marca ORDER BY nombre;")
+            cursor.execute("SELECT * FROM Marca WHERE dbo.cantModelo(idMarca)>0 ORDER BY nombre;")
             context['marcas'] = cursor.fetchall()
             cursor.execute("SELECT * FROM Ciudad ORDER BY nombre;")
             context['ciudades'] = cursor.fetchall()
             return render(request, 'registrarVehiculo.html', context)
         elif mode == 'registrarrequest':
-            print(request.POST)
+            cursor.execute(
+                "exec SP_RegistrarVehiculo %s, '%s', %s, %s, %s, %s, '%s';" % (
+                    context['empresa'], cedula, request.POST['modelo'], request.POST['precio'],
+                    request.POST['estado'], request.POST['ciudad'], request.POST['desc']))
+            dbmssql.commit()
             return JsonResponse({'success': True})
+        elif mode == 'fetch':
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE VehiculoConDetalles.idVehiculo =%s" % (
+                    request.POST['idVehiculo']))
+            response = {'success': True, 'data': [i for i in cursor.fetchone()]}
+            cursor.execute(
+                "SELECT * FROM Vehiculo WHERE idVehiculo IN (SELECT Ventas.idVehiculo FROM Ventas GROUP BY idVehiculo);")
+            response['vendido'] = len(cursor.fetchall()) > 0
+            return JsonResponse(response)
+        elif mode == 'update':
+            cursor.execute(
+                "SELECT * FROM Vehiculo WHERE idVehiculo IN (SELECT Ventas.idVehiculo FROM Ventas GROUP BY idVehiculo);")
+            if len(cursor.fetchall()) > 0:
+                return JsonResponse({'success': False})
+            cursor.execute("UPDATE Vehiculo SET descripcion='%s', Precio=%s WHERE idVehiculo=%s" % (
+                request.POST['desc'], request.POST['precio'], request.POST['idVehiculo']))
+            return JsonResponse({'success': True})
+        if context['individual']:
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE aprobado=1 AND idPublicador='%s' AND idEmpresa=1;" % (
+                    cedula))
+        else:
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE aprobado=1 AND idEmpresa=%s;" % (
+                    context['empresa']))
+        context['vehiculos'] = cursor.fetchall()
+        return render(request, 'ventaVehiculo.html', context)
+    if path == 'registrar':
+        if mode == 'request':
+            print(request.POST)
+            return JsonResponse({'success':True})
+        elif mode is not None:
+            return HttpResponseNotFound
+        cursor.execute("SELECT * FROM PersonaUsuario WHERE verificado = 1;")
+        context['cedulas'] = cursor.fetchall()
+        if context['individual']:
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE aprobado=1 AND idPublicador='%s' AND idEmpresa=1  AND OV.idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas);" % (
+                    cedula))
+        else:
+            cursor.execute(
+                "SELECT * FROM VehiculoConDetalles INNER JOIN OwnerVehiculo OV on VehiculoConDetalles.idVehiculo = OV.idVehiculo WHERE aprobado=1 AND idEmpresa=%s AND OV.idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas);" % (
+                    context['empresa']))
+        context['vehiculos'] = cursor.fetchall()
+        return render(request, 'ventaRealizar.html', context)
+    if path == 'ver':
+        if context['individual']:
+            return HttpResponseNotFound
     cursor.execute("SELECT * FROM Persona WHERE usuario='" + request.COOKIES['LoginID'] + "'")
     temp = cursor.fetchone()
     context['nombre'] = temp[1]
     context['apellido'] = temp[2]
     context['adminPanel'] = False
-    context['title'] = 'Panel de Ventas'
     return render(request, 'venta.html', context)
 
 
@@ -312,6 +382,9 @@ def api(request, table, option):
             elif table == "Usuario":
                 cursor.execute("UPDATE Usuario SET verificado=%s WHERE usuario='%s'" % (
                     request.POST['aproved'], request.POST['username']))
+            elif table == 'Vehiculo':
+                cursor.execute("UPDATE Vehiculo SET aprobado=%s WHERE idVehiculo=%s" % (
+                    request.POST['aproved'], request.POST['idVehiculo']))
             dbmssql.commit()
             response['success'] = True
             return JsonResponse(response)

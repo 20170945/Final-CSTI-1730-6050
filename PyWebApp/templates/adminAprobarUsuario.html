@@ -17,12 +17,12 @@
             <tbody>
             {% for cliente in clientes %}
                 <tr>
-                    <th>{{ cliente.0 }}</th>
-                    <th>{{ cliente.1 }}</th>
-                    <th>{{ cliente.2 }}</th>
-                    <th>{{ cliente.3 }}</th>
-                    <th>{{ cliente.4 }}</th>
-                    <th><button onclick="update('{{ cliente.4 }}',1);">Aceptar</button><button onclick="update('{{ cliente.4 }}',0);">Rechazar</button></th>
+                    <td>{{ cliente.0 }}</td>
+                    <td>{{ cliente.1 }}</td>
+                    <td>{{ cliente.2 }}</td>
+                    <td>{{ cliente.3 }}</td>
+                    <td>{{ cliente.4 }}</td>
+                    <td><button onclick="update('{{ cliente.4 }}',1);">Aceptar</button><button onclick="update('{{ cliente.4 }}',0);">Rechazar</button></td>
                 </tr>
             {% endfor %}
             </tbody>

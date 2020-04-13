@@ -1,0 +1,60 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Vehículos por aprobar</h1>
+        <div class="dropdown-divider"></div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">id de Empresa</th>
+                <th scope="col">Cédula del Vendedor</th>
+                <th scope="col">id de Vehículo</th>
+                <th scope="col">Año</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Ciudad</th>
+                <th scope="col">Precio</th>
+                <th scope="col">-</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for vehiculo in vehiculos %}
+                <tr>
+                    <td>{{ vehiculo.14 }}</td>
+                    <td>{{ vehiculo.15 }}</td>
+                    <td>{{ vehiculo.0 }}</td>
+                    <td>{{ vehiculo.5 }}</td>
+                    <td>{{ vehiculo.2 }}</td>
+                    <td>{{ vehiculo.4 }}</td>
+                    <td>{{ vehiculo.10 }}</td>
+                    <td>{{ vehiculo.6 }}</td>
+                    <td>
+                        <button onclick="update('{{ vehiculo.0 }}',1);">Aceptar</button>
+                        <button onclick="update('{{ vehiculo.0 }}',0);">Rechazar</button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        function update(idVehiculo, value) {
+            $.ajax({
+                type: "POST",
+                url: "/api/Vehiculo/update",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    idVehiculo: idVehiculo,
+                    aproved: value
+                },
+                success: function (result) {
+                    location.reload();
+                },
+                error: function () {
+                    alert("Error.")
+                }
+            })
+        }
+    </script>
+{% endblock %}

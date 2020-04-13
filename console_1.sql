@@ -165,7 +165,8 @@ create table Vehiculo
     Fecha       date,
     Nuevo       bit,
     idCiudad    int foreign key references Ciudad (idCiudad),
-    descripcion varchar(255)
+    descripcion varchar(255),
+    aprobado    bit
 )
 go
 
@@ -202,14 +203,6 @@ create table Anuncio
 )
 go
 
-create table PedidoAnuncio
-(
-    idVehiculo int foreign key references Vehiculo (idVehiculo),
-    dias       int,
-    CONSTRAINT PK_PedidoAnuncio primary key (idVehiculo)
-
-)
-
 
 --Vistas
 CREATE VIEW ModeloConTipo AS
@@ -224,15 +217,33 @@ FROM Persona
          INNER JOIN Usuario U on Persona.usuario = U.usuario;
 go
 
+CREATE VIEW VehiculoConDetalles AS
+SELECT idVehiculo,
+       M.idMarca,
+       M2.nombre as nombreMarca,
+       Vehiculo.idModelo,
+       M.nombre  as nombreModelo,
+       M.ano,
+       Precio,
+       Fecha,
+       Nuevo,
+       Vehiculo.idCiudad,
+       C.nombre as Ciudad,
+       Vehiculo.descripcion,
+       aprobado
+FROM Vehiculo
+         INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
+         INNER JOIN Marca M2 on M.idMarca = M2.idMarca INNER JOIN Ciudad C on Vehiculo.idCiudad = C.idCiudad;
 
 --Stored Procedures
 CREATE PROCEDURE SP_RegistrarVehiculo @idEmpresa int, @idPublicador varchar(50), @idModelo int, @Precio float,
                                       @Nuevo bit, @IdCiudad int, @Descripcion varchar(255)
 as
 BEGIN
-    INSERT INTO Vehiculo(idModelo, Precio, Fecha, Nuevo, idCiudad, descripcion) VALUES (@idModelo, @Precio, GETDATE(), @Nuevo, @IdCiudad, @Descripcion);
+    INSERT INTO Vehiculo(idModelo, Precio, Fecha, Nuevo, idCiudad, descripcion)
+    VALUES (@idModelo, @Precio, GETDATE(), @Nuevo, @IdCiudad, @Descripcion);
     DECLARE @idVehiculo int;
-    SELECT @idVehiculo=MAX(idVehiculo) FROM Vehiculo;
+    SELECT @idVehiculo = MAX(idVehiculo) FROM Vehiculo;
     INSERT INTO OwnerVehiculo(idVehiculo, idEmpresa, idPublicador) VALUES (@idVehiculo, @idEmpresa, @idPublicador);
 END;
 go
@@ -246,7 +257,6 @@ BEGIN
     VALUES (@Cedula, @Nombre, @Apellido, @Direccion, @Email, @User);
 END;
 go
-
 
 
 --Funciones
@@ -267,14 +277,64 @@ CREATE FUNCTION getVendedorEmpresa(@usuario varchar(50))
 AS
 BEGIN
     DECLARE @ans int;
-    SELECT @ans=idEmpresa FROM VendedorUsuario WHERE cedulaVendedor=dbo.getUserCedula(@usuario);
+    SELECT @ans = idEmpresa FROM VendedorUsuario WHERE cedulaVendedor = dbo.getUserCedula(@usuario);
     if (@ans IS NULL)
         set @ans = -1;
     RETURN @ans;
 END;
 go
 
--- PRESET
+CREATE FUNCTION cantModelo(@idMarca int)
+    RETURNS int
+AS
+BEGIN
+    DECLARE @ans int;
+    SELECT @ans = COUNT(*) FROM Modelo WHERE idMarca = @idMarca GROUP BY idMarca;
+    if (@ans IS NULL)
+        set @ans = 0;
+    RETURN @ans;
+END;
+go
+
+CREATE FUNCTION getCarrosDeEmpresa(@idEmpresa int)
+    RETURNS TABLE AS RETURN
+            (
+                SELECT ROW_NUMBER() over (ORDER BY OV.idVehiculo) as idRow,
+                       OV.idVehiculo,
+                       idEmpresa,
+                       idPublicador,
+                       M2.nombre                                  as Marca,
+                       M.nombre                                   as Modelo,
+                       M.ano
+                FROM Vehiculo
+                         INNER JOIN OwnerVehiculo OV on Vehiculo.idVehiculo = OV.idVehiculo
+                         INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
+                         INNER JOIN Marca M2 on M.idMarca = M2.idMarca
+                WHERE idEmpresa = @idEmpresa
+                  AND aprobado = 1
+            );
+go
+
+CREATE FUNCTION getCarrosDeIndividual(@cedula varchar(50))
+    RETURNS TABLE AS RETURN
+            (
+                SELECT ROW_NUMBER() over (ORDER BY OV.idVehiculo) as idRow,
+                       OV.idVehiculo,
+                       idEmpresa,
+                       idPublicador,
+                       M2.nombre                                  as Marca,
+                       M.nombre                                   as Modelo,
+                       M.ano
+                FROM Vehiculo
+                         INNER JOIN OwnerVehiculo OV on Vehiculo.idVehiculo = OV.idVehiculo
+                         INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
+                         INNER JOIN Marca M2 on M.idMarca = M2.idMarca
+                WHERE idPublicador = @cedula
+                  AND aprobado = 1
+            );
+go
+
+-- PRESET u'admin' P'1234'
 EXEC SP_NuevoUsuario 'admin', '81DC9BDB52D04DC20036DBD8313ED055', '1', 'Administrador', 'Sistema', '', '', 1;
 go
 
@@ -288,54 +348,4 @@ WHERE verificado = 0;
 go
 
 
---TODO Consultas y Funciones
--- Consulta general de vehículos en venta ordenado por fecha.
-SELECT *
-FROM Vehiculo
-WHERE idVehiculo NOT IN (SELECT Ventas.idVehiculo FROM Ventas)
-ORDER BY Fecha;
--- Consulta de vendedores indicado tipo (empresa o persona física) y cantidad de anuncios publicados.
 
--- Consulta general de usuarios (clientes).
-SELECT *
-FROM Persona
-WHERE cedula IN (SELECT Ventas.idCliente FROM Ventas)
--- Consulta de venta por año, mes, marca, ciudad.
--- Consulta de publicación indicando costo, tiempo de publicación.
--- Consulta de vendedores con mayor venta de vehículos.
--- Función que actualice el estado del anuncio de disponible (D) a vendido (V).
-CREATE PROCEDURE SP_AnuncioVendido @idAnuncio int as
-BEGIN
-    UPDATE Anuncio SET estado='V' WHERE idAnuncio = @idAnuncio;
-END;
-go
--- Función que ingrese una publicación de anuncio.
-Create procedure AgregarAnuncio @IDVehiculo int,
-                                @FechaPublicacion datetime,
-                                @FechaExpiracion datetime,
-                                @Estado char
-As
-Begin
-    Insert into Anuncio(IDVehiculo, FechaPublicacion, FechaExpiracion, Estado)
-    Values (@IDVehiculo, @FechaPublicacion, @FechaExpiracion, @Estado)
-End;
-go
--- Función que elimine una publicación de anuncio.
-Create procedure EliminarAnuncio @idAnuncio int
-As
-
-Begin
-    Delete from Anuncio where idAnuncio = @idAnuncio
-End
-go
--- Función que muestre los vehículos por marca (se debe enviar la marca como parámetro).
-CREATE FUNCTION vehiculosPorMarca(@marca int)
-    RETURNS TABLE
-        AS RETURN
-            (
-                SELECT *
-                FROM Vehiculo
-                         INNER JOIN Modelo M on Vehiculo.idModelo = M.idModelo
-                WHERE M.idMarca = @marca
-            );
-go

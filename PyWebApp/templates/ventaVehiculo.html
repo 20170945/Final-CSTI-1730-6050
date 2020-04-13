@@ -1,0 +1,132 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Vehículo</h1>
+        <div class="dropdown-divider"></div>
+        <div class="form-group row">
+            <label for="vehiculo" class="col-sm-1 col-form-label">Vehículo:</label>
+            <div class="col-sm-11">
+                <select name="vehiculo" class="form-control selectpicker" title="Ninguno" id="vehiculo"
+                        data-live-search="true">
+                    {% for vehiculo in vehiculos %}
+                        <option value="{{ vehiculo.0 }}">[{{ vehiculo.0 }}] {{ vehiculo.2 }} {{ vehiculo.4 }}
+                            ({{ vehiculo.5 }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {# no editables #}
+        {% if not individual %}
+            <div class="form-group row">
+                <label for="vendedor" class="col-sm-1 col-form-label">Vendedor:</label>
+                <div class="col-sm-11">
+                    <input type="text" readonly id="vendedor" class="form-control">
+                </div>
+            </div>
+        {% endif %}
+        <div class="form-group row">
+            <label for="marca" class="col-sm-1 col-form-label">Marca:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="marca" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="modelo" class="col-sm-1 col-form-label">Modelo:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="modelo" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="year" class="col-sm-1 col-form-label">Año:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="year" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="estado" class="col-sm-1 col-form-label">Estado:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="estado" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="disponible" class="col-sm-1 col-form-label">Disponible:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="disponible" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="ciudad" class="col-sm-1 col-form-label">Ciudad:</label>
+            <div class="col-sm-11">
+                <input type="text" readonly id="ciudad" class="form-control">
+            </div>
+        </div>
+
+        {# fin #}
+        <div class="form-group row">
+            <label for="precio" class="col-sm-1 col-form-label">Precio:</label>
+            <div class="col-sm-11">
+                <input type="number"  id="precio" class="form-control">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="desc" class="col-sm-1 col-form-label">Descripción:</label>
+            <div class="col-sm-11">
+                <textarea id="desc" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-11">
+                <button type="button" class="form-control" onclick="guardar();">Guardar</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function guardar() {
+            $.ajax({
+                type: "POST",
+                url: "/panel/venta/vehiculo/update",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    idVehiculo: $('#vehiculo').val(),
+                    precio: $('#precio').val(),
+                    desc: $('#desc').val()
+                },
+                success: function (result) {
+                    if(!result['success'])
+                        alert('No se pudo guardar los cambios:\nPosiblemente debido a que no se encuentra disponible.')
+                },
+                error: function () {
+                }
+            })
+        };
+
+        $('#vehiculo').change(function () {
+            $.ajax({
+                type: "POST",
+                url: "/panel/venta/vehiculo/fetch",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                    state: "inactive",
+                    idVehiculo: $('#vehiculo').val()
+                },
+                success: function (result) {
+                    console.log(result['data']);
+                    $('#vendedor').val(result['data'][15]);
+                    $('#marca').val(result['data'][2]);
+                    $('#modelo').val(result['data'][4]);
+                    $('#year').val(result['data'][5]);
+                    $('#estado').val(result['data'][8] ? 'Nuevo' : 'Usado');
+                    $('#ciudad').val(result['data'][10]);
+                    $('#desc').val(result['data'][11]);
+                    $('#disponible').val(result['vendido'] ? 'No' : 'Si');
+                    $('#precio').val(result['data'][6])
+                },
+                error: function () {
+                }
+            })
+        });
+    </script>
+{% endblock %}

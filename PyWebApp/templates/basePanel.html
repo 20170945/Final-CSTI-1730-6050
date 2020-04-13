@@ -23,7 +23,8 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <a class="navbar-brand" href=
                     {% if adminPanel %}"/panel/admin"{% else %}"/panel/venta"{% endif %}>
-            <h1>{{ Empresa.Nombre }}</h1></a>
+            <h1>{% if adminPanel %}{{ Empresa.Nombre }}{% elif individual %}{{ Empresa.Nombre }}{% else %}
+                {{ nombreEmpresa }}{% endif %}</h1></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
                     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -37,7 +38,8 @@
                                 Vehículos
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="/panel/admin/vehiculo">Marcas/Modelos</a>
+                                <a class="dropdown-item" href="/panel/admin/vehiculo/aprobar">Aprobar</a>
+                                <a class="dropdown-item" href="/panel/admin/vehiculo/marcaYmodelo">Marcas/Modelos</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -60,11 +62,27 @@
                             </div>
                         </li>
                     {% else %}
+                        {% if individual %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="/panel/venta/registrar">Registrar Venta</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                    Ventas
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/panel/venta/ver">Ver</a>
+                                    <a class="dropdown-item" href="/panel/venta/registrar">Registrar</a>
+                                </div>
+                            </li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                                 Vehículos
                             </a>
                             <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/panel/venta/vehiculo">Ver</a>
                                 <a class="dropdown-item" href="/panel/venta/vehiculo/registrar">Registrar</a>
                             </div>
                         </li>

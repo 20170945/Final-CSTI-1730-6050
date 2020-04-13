@@ -15,42 +15,45 @@ $(document).ready(function () {
     var yearAr = [1970, new Date().getFullYear() + 1]
     for (let i = 0; i < datos.length; i++) {
         let temp = datos[i].split('=');
-        temp[1] = temp[1].replace('+',' ');
+        if (temp[1] != null)
+            temp[1] = temp[1].replace('+', ' ');
+
         if (temp[0] in datosDict) {
             datosDict[temp[0]].push(temp[1])
         } else {
-            datosDict[temp[0]]=[temp[1]]
+            datosDict[temp[0]] = [temp[1]]
         }
     }
-    if('estado' in datosDict) {
+    if ('estado' in datosDict) {
         $("#estado").val(datosDict['estado'][0]);
     }
-    if('year' in datosDict) {
+    if ('year' in datosDict) {
         yearAr[0] = Math.min(...datosDict['year']);
         yearAr[1] = Math.max(...datosDict['year']);
     }
-    if('marca' in datosDict) {
+    if ('marca' in datosDict) {
         $('#marca').selectpicker('val', datosDict['marca']);
         modelo.empty();
         modelo.prop('disabled', false);
         loadModeloData();
-        if('modelo' in datosDict) {
+        if ('modelo' in datosDict) {
             modelo.selectpicker('val', datosDict['modelo']);
         }
         modelo.selectpicker('refresh');
     }
-    if('price' in datosDict) {
+    if ('price' in datosDict) {
         $('#priceA').val(Math.min(...datosDict['price']));
         $('#priceB').val(Math.max(...datosDict['price']));
     }
-    if('lugar' in datosDict) {
+    if ('lugar' in datosDict) {
         $('#lugar').selectpicker('val', datosDict['lugar']);
         $('#lugar').selectpicker('refresh');
     }
-    if('tipo' in datosDict) {
+    if ('tipo' in datosDict) {
         $('#tipo').selectpicker('val', datosDict['tipo'][0]);
         $('#tipo').selectpicker('refresh');
     }
+    console.log('??')
     slider = document.getElementById('yearslider');
     yearRange = document.getElementById('showyearrange');
     noUiSlider.create(slider, {

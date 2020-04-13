@@ -1,0 +1,59 @@
+{% extends 'basePanel.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <h1>Registrar venta</h1>
+        <div class="dropdown-divider"></div>
+        <div class="form-group row">
+            <label for="vehiculo" class="col-sm-1 col-form-label">Vehículo:</label>
+            <div class="col-sm-11">
+                <select name="vehiculo" class="form-control selectpicker" title="Ninguno" id="vehiculo"
+                        data-live-search="true">
+                    {% for vehiculo in vehiculos %}
+                        <option value="{{ vehiculo.0 }}">[{{ vehiculo.0 }}] {{ vehiculo.2 }} {{ vehiculo.4 }}
+                            ({{ vehiculo.5 }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="cedula" class="col-sm-1 col-form-label">Cédula de cliente:</label>
+            <div class="col-sm-11">
+                <select name="Cliente" class="form-control selectpicker" title="Ninguno" id="cedula"
+                        data-live-search="true">
+                    {% for cedula in cedulas %}
+                        <option>{{ cedula.0 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-11">
+                <button type="button" class="form-control" onclick="guardar();">Registrar</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">function guardar() {
+        if($('#vehiculo').val()=="" || $('#cedula').val()=="") {
+            alert("Llene los campos.");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/panel/venta/registrar/request",
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}",   // < here
+                state: "inactive",
+                idVehiculo: $('#vehiculo').val(),
+                cliente: $('#cedula').val()
+            },
+            success: function (result) {
+                alert("Venta registrado.");
+                location.reload();
+            },
+            error: function () {
+            }
+        })
+    };</script>
+{% endblock %}
